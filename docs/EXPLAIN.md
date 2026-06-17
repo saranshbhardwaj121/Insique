@@ -30,7 +30,7 @@ Current Phase:
 ```text
 Sprint 0 ✅ Complete
 Sprint 1 ✅ Complete
-Sprint 2 ⏳ Not Started
+Sprint 2 ✅ Complete
 ```
 
 Current Backend Capabilities:
@@ -44,6 +44,10 @@ Current Backend Capabilities:
 * Alembic Migrations
 * Integration Tests
 * Authentication Rate Limiting
+* Watchlist CRUD
+* Watchlist Repository
+* Watchlist Service
+* Watchlist Schemas
 
 ---
 
@@ -377,10 +381,16 @@ GET  /api/v1/auth/me
 Current:
 
 ```http
-GET /api/v1/watchlists/status
+GET    /api/v1/watchlists
+POST   /api/v1/watchlists
+GET    /api/v1/watchlists/{watchlist_id}
+PATCH  /api/v1/watchlists/{watchlist_id}
+DELETE /api/v1/watchlists/{watchlist_id}
+POST   /api/v1/watchlists/{watchlist_id}/items
+DELETE /api/v1/watchlists/{watchlist_id}/items/{ticker}
 ```
 
-Placeholder endpoint.
+Implemented authenticated Watchlist CRUD with ticker management, ticker normalization, ownership validation, deterministic ordering, and integration tests.
 
 ---
 
@@ -436,6 +446,7 @@ Current:
 
 ```text
 test_auth_integration.py
+test_watchlist_integration.py
 ```
 
 Coverage:
@@ -444,6 +455,9 @@ Coverage:
 * Login
 * Refresh Tokens
 * Protected Routes
+* Watchlist CRUD
+* Watchlist Ownership Validation
+* Watchlist Ticker Management
 
 Run Tests:
 
@@ -557,14 +571,17 @@ Use identifier field.
 * SQLAlchemy ORM
 * Alembic Migrations
 * Integration Tests
+* Watchlist CRUD
+* Watchlist Repository
+* Watchlist Service
+* Watchlist Schemas
 
 ## Partially Complete
 
-* Watchlists
 * Trades
 * Market Data
 
-Currently scaffolded only.
+Trades and Market Data are currently scaffolded only.
 
 ## Not Started
 
@@ -580,6 +597,20 @@ Currently scaffolded only.
 # Sprint 2 Roadmap
 
 ## Watchlists
+
+Status:
+
+```text
+Completed
+```
+
+Implemented:
+
+* Watchlist CRUD
+* Watchlist Repository
+* Watchlist Service
+* Watchlist Schemas
+* Integration Tests
 
 Goals:
 
