@@ -18,4 +18,9 @@ class Watchlist(TimestampMixin, Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
 
     user = relationship("User", back_populates="watchlists")
-    items = relationship("WatchlistItem", back_populates="watchlist", cascade="all, delete-orphan")
+    items = relationship(
+        "WatchlistItem",
+        back_populates="watchlist",
+        cascade="all, delete-orphan",
+        order_by="WatchlistItem.ticker",
+    )
