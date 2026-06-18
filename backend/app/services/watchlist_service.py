@@ -8,7 +8,13 @@ from backend.app.models.user import User
 from backend.app.models.watchlist import Watchlist
 from backend.app.models.watchlist_item import WatchlistItem
 from backend.app.repositories.watchlist_repository import WatchlistRepository
-from backend.app.schemas.watchlist import WatchlistQuoteItemRead, WatchlistQuotesResponse
+from backend.app.schemas.watchlist import (
+    WatchlistQuoteItemRead,
+    WatchlistQuotesResponse,
+    WatchlistSignalItemRead,
+    WatchlistSignalsResponse,
+)
+from backend.app.services.signal_service import SignalService
 from backend.app.services.market_data_service import (
     MarketDataProviderError,
     MarketDataService,
@@ -99,6 +105,76 @@ class WatchlistService:
             watchlist_name=watchlist.name,
             quotes=quotes,
             fetched_at=fetched_at,
+        )
+
+    def get_watchlist_signals(
+        self,
+        user: User,
+        watchlist_id: UUID,
+        period: str = "6mo",
+        interval: str = "1d",
+        refresh: bool = False,
+        rsi_window: int = 14,
+        rsi_oversold: float = 30,
+        rsi_overbought: float = 70,
+        macd_fast: int = 12,
+        macd_slow: int = 26,
+        macd_signal: int = 9,
+        sma_short: int = 20,
+        sma_long: int = 50,
+        ema_short: int = 12,
+        ema_long: int = 26,
+    ) -> WatchlistSignalsResponse:
+        watchlist = self.get_watchlist(user, watchlist_id)
+        generated_at = datetime.now(timezone.utc)
+        signal_service = SignalService(self.session)
+
+        signals: list[WatchlistSignalItemRead] = []
+        for item in watchlist.items:
+            try:
+                summary = signal_service.get_signal_summary(
+                    ticker=item.ticker,
+                    period=period,
+                    interval=interval,
+                    refresh=refresh,
+                    rsi_window=rsi_window,
+                    rsi_oversold=rsi_oversold,
+                    rsi_overbought=rsi_overbought,
+                    macd_fast=macd_fast,
+                    macd_slow=macd_slow,
+                    macd_signal=macd_signal,
+                    sma_short=sma_short,
+                    sma_long=sma_long,
+                    ema_short=ema_short,
+                    ema_long=ema_long,
+                )
+                signals.append(
+                    WatchlistSignalItemRead(ticker=item.ticker, summary=summary)
+                )
+            except (MarketDataValidationError, MarketDataProviderError) as exc:
+                signals.append(
+                    WatchlistSignalItemRead(ticker=item.ticker, error=str(exc))
+                )
+
+        return WatchlistSignalsResponse(
+            watchlist_id=watchlist.id,
+            watchlist_name=watchlist.name,
+            period=period,
+            interval=interval,
+            parameters={
+                "rsi_window": rsi_window,
+                "rsi_oversold": rsi_oversold,
+                "rsi_overbought": rsi_overbought,
+                "macd_fast": macd_fast,
+                "macd_slow": macd_slow,
+                "macd_signal": macd_signal,
+                "sma_short": sma_short,
+                "sma_long": sma_long,
+                "ema_short": ema_short,
+                "ema_long": ema_long,
+            },
+            signals=signals,
+            generated_at=generated_at,
         )
 
     def rename_watchlist(self, user: User, watchlist_id: UUID, name: str) -> Watchlist:

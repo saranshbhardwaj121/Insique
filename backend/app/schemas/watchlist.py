@@ -1,7 +1,10 @@
 from datetime import datetime
+from typing import Optional, Union
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from backend.app.schemas.signals import SignalSummaryResponse
 
 
 class WatchlistCreate(BaseModel):
@@ -56,3 +59,19 @@ class WatchlistQuotesResponse(BaseModel):
     watchlist_name: str
     quotes: list[WatchlistQuoteItemRead]
     fetched_at: datetime
+
+
+class WatchlistSignalItemRead(BaseModel):
+    ticker: str
+    summary: Optional[SignalSummaryResponse] = None
+    error: Optional[str] = None
+
+
+class WatchlistSignalsResponse(BaseModel):
+    watchlist_id: UUID
+    watchlist_name: str
+    period: str
+    interval: str
+    parameters: dict[str, Union[float, int]]
+    signals: list[WatchlistSignalItemRead]
+    generated_at: datetime
