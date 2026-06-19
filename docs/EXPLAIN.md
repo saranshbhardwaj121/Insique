@@ -906,3 +906,72 @@ Known Limitations:
 - No charts
 - No autocomplete search
 - Uses backend default indicator settings
+
+Sprint 8B Status: COMPLETE
+
+Implemented:
+- Signals feature module
+- Signal API layer
+- Signal query hooks
+- Signal BFF route handlers
+- Signals page
+- Single ticker signal lookup
+- Watchlist signals view
+- Signal hero card
+- Signal indicator breakdown cards
+- Watchlist signal row cards
+- Loading states
+- Error states
+- Empty states
+- Mobile responsive signals UI
+
+Files Created:
+- Signal API fetchers
+- Signal query hooks
+- Single ticker signal BFF route
+- Watchlist signals BFF route
+- Signals page
+- Signals page content
+- Single ticker view
+- Watchlist signals view
+- Signals search form
+- Signals empty state
+- Signals loading skeleton
+- Signals error state
+- Signal hero card
+- Signal indicator breakdown card
+- Signal ticker row card
+
+Files Modified:
+- Signal types
+- Desktop navigation (Signals enabled)
+- Mobile navigation (Signals enabled)
+
+Frontend Status:
+- Signals page connected to backend
+- Single ticker signals integrated
+- Watchlist signals integrated
+- BUY / SELL / NEUTRAL ratings displayed
+- Confidence display implemented
+- Signal reasoning display implemented
+- Protected dashboard route
+- Mobile responsive
+
+Build Status:
+- ESLint: 0 warnings, 0 errors
+- TypeScript: 0 errors
+- Production build: successful
+
+Known Limitations:
+- Signal generation can be slow on first request
+- Watchlist signals scale linearly with watchlist size
+- No parameter controls
+- No autocomplete search
+- Uses backend default signal settings
+
+Project Status:
+- Sprint 7A Complete
+- Sprint 7B Complete
+- Sprint 8A Complete
+- Sprint 8B Complete
+- Frontend Signals Layer Complete
