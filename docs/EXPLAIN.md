@@ -1396,3 +1396,349 @@ Future Expansion:
 * Signal-Aware Search
 
 Status: COMPLETE
+# Sprint 11A — Alert Engine
+
+## Objective
+
+Transform Insique from a passive analysis platform into a proactive market monitoring system by introducing automated alert evaluation, trigger detection, and alert history tracking.
+
+---
+
+## Problem Statement
+
+Prior to Sprint 11A, users were required to manually revisit the platform to discover new opportunities.
+
+Typical workflow:
+
+Open Dashboard
+
+↓
+
+Check Watchlists
+
+↓
+
+Check Signals
+
+↓
+
+Check Analytics
+
+↓
+
+Repeat
+
+This approach required constant manual monitoring and increased the likelihood of missing important market events.
+
+---
+
+## Features Implemented
+
+### Alert Creation
+
+Users can create custom market alerts tied to individual tickers.
+
+Supported Alert Types:
+
+* Price Alerts
+* Signal Alerts
+* Confidence Alerts
+* RSI Alerts
+
+Examples:
+
+RELIANCE.NS
+Price > 3500
+
+HDFCBANK.NS
+Price < 1800
+
+INFY.NS
+Signal = BUY
+
+ICICIBANK.NS
+Confidence > 80%
+
+RELIANCE.NS
+RSI < 30
+
+---
+
+### Alert Management
+
+Implemented full alert lifecycle management.
+
+Features:
+
+* Create alerts
+* View alerts
+* Update alerts
+* Delete alerts
+* Enable/Disable alerts
+
+Benefits:
+
+* Flexible monitoring
+* User-controlled alert behavior
+* Improved alert organization
+
+---
+
+### Background Alert Evaluation
+
+Introduced automated alert processing using APScheduler.
+
+Evaluation Interval:
+
+Every 5 minutes
+
+Responsibilities:
+
+* Load active alerts
+* Evaluate conditions
+* Detect trigger events
+* Record trigger history
+
+Benefits:
+
+* No manual monitoring required
+* Consistent evaluation cycle
+* Foundation for future notifications
+
+---
+
+### Trigger Detection Engine
+
+Implemented a dedicated alert evaluation service.
+
+Supported Evaluations:
+
+* Price thresholds
+* Signal changes
+* Confidence thresholds
+* RSI thresholds
+
+Benefits:
+
+* Centralized evaluation logic
+* Easier maintenance
+* Future extensibility
+
+---
+
+### Trigger History
+
+Implemented persistent trigger tracking.
+
+Each trigger stores:
+
+* Alert reference
+* Trigger timestamp
+* Evaluation snapshot
+* Trigger context
+
+Benefits:
+
+* Historical visibility
+* Audit trail
+* Future notification support
+
+---
+
+## Architecture Changes
+
+### Database Layer
+
+Added:
+
+alerts
+
+Stores:
+
+* Alert definition
+* Condition type
+* Threshold values
+* Status
+* Ownership
+
+triggered_alerts
+
+Stores:
+
+* Trigger records
+* Evaluation snapshots
+* Trigger timestamps
+
+Benefits:
+
+* Separation of configuration and history
+* Improved scalability
+* Better reporting capabilities
+
+---
+
+### Backend Services
+
+Added:
+
+Alert Repository
+
+Alert Service
+
+Alert Evaluation Service
+
+Scheduler Service
+
+Responsibilities:
+
+* CRUD operations
+* Alert ownership validation
+* Condition evaluation
+* Scheduled execution
+
+---
+
+### API Layer
+
+Implemented alert endpoints for:
+
+* Create Alert
+* List Alerts
+* Get Alert
+* Update Alert
+* Delete Alert
+* View Trigger History
+
+Benefits:
+
+* Complete alert lifecycle support
+* Frontend integration
+* Future automation support
+
+---
+
+## User Experience Improvements
+
+Before:
+
+User manually checks markets.
+
+↓
+
+Opportunity may be missed.
+
+After:
+
+User creates alert.
+
+↓
+
+Background scheduler monitors conditions.
+
+↓
+
+Trigger recorded automatically.
+
+↓
+
+History available for review.
+
+Benefits:
+
+* Reduced manual effort
+* Continuous monitoring
+* Improved awareness
+
+---
+
+## Technical Improvements
+
+### Ownership Enforcement
+
+All alerts are tied to authenticated users.
+
+Benefits:
+
+* Data isolation
+* Security
+* Multi-user support
+
+---
+
+### Indexed Queries
+
+Added database indexes for:
+
+* Active alerts
+* User alerts
+* Trigger history
+
+Benefits:
+
+* Faster evaluations
+* Better scalability
+
+---
+
+### Automated Scheduling
+
+Introduced application-managed scheduler lifecycle.
+
+Startup:
+
+Scheduler starts automatically.
+
+Shutdown:
+
+Scheduler stops gracefully.
+
+Benefits:
+
+* Reliable execution
+* Cleaner deployment behavior
+
+---
+
+## Testing & Validation
+
+Implemented:
+
+* Alert CRUD tests
+* Evaluation engine tests
+* Trigger generation tests
+* Ownership validation tests
+
+Results:
+
+176 tests passing
+
+0 failures
+
+Production build successful
+
+Database migration successful
+
+---
+
+## Outcome
+
+Sprint 11A successfully introduced the Alert Engine.
+
+Insique can now:
+
+* Monitor market conditions automatically
+* Evaluate user-defined rules
+* Record trigger events
+* Maintain trigger history
+
+This sprint establishes the foundation for Sprint 11B Notification Delivery.
+
+Future Expansion:
+
+* In-App Notifications
+* Email Alerts
+* Telegram Alerts
+* Discord Alerts
+* Push Notifications
+
+Status: COMPLETE
