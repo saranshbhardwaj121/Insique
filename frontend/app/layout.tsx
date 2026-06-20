@@ -6,8 +6,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SignalForge - Market Intelligence",
-  description: "Personal market intelligence platform for stock analysis, watchlists, and trading insights",
+  title: "Insique — Decide with evidence",
+  description:
+    "Market intelligence platform. Real-time analytics, technical signals, and evidence-based insights — so every decision has a reason.",
 };
 
 export default function RootLayout({
