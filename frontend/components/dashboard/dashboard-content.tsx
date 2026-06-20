@@ -26,7 +26,7 @@ export function DashboardContent() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome to SignalForge. Your market intelligence platform.
+          Welcome to Insique. Your market intelligence platform.
         </p>
       </div>
 

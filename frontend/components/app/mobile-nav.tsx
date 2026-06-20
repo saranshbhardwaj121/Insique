@@ -49,7 +49,7 @@ export function MobileNav() {
         <div className="flex h-14 items-center px-4">
           <Link href="/dashboard" className="flex items-center gap-2 font-semibold" onClick={() => setOpen(false)}>
             <Signal className="h-5 w-5 text-primary" />
-            <span>SignalForge</span>
+            <span>Insique</span>
           </Link>
         </div>
         <Separator />

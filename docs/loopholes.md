@@ -475,11 +475,11 @@ Future Research
 
 ## Current Name
 
-SignalForge
+Insique (formerly SignalForge)
 
 Issue:
 
-Multiple existing companies and products already use SignalForge.
+Multiple existing companies and products already used SignalForge.
 
 Problems:
 
@@ -491,17 +491,18 @@ Problems:
 
 ## Candidate Names Evaluated
 
-### SignalForge
+### SignalForge (former name)
 
 Pros:
 
-* Descriptive
-* Familiar
+* Was descriptive
+* Was familiar
 
 Cons:
 
 * Existing competitors
 * Generic
+* SEO competition
 
 ---
 

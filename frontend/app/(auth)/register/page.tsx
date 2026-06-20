@@ -5,7 +5,7 @@ import { RegisterForm } from "@/components/auth/register-form";
 import { Signal } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Create account - SignalForge",
+  title: "Create account - Insique",
 };
 
 export default function RegisterPage() {

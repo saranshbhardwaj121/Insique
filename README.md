@@ -1,6 +1,6 @@
-# SignalForge
+# Insique
 
-SignalForge is a production-oriented market intelligence platform focused on decision support, analytics, and portfolio journaling. It is explicitly not a prediction engine and must not provide automatic buy/sell recommendations.
+Insique is a production-oriented market intelligence platform focused on decision support, analytics, and portfolio journaling. It is explicitly not a prediction engine and must not provide automatic buy/sell recommendations.
 
 ## Current Scope
 

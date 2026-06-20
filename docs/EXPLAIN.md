@@ -1,8 +1,8 @@
-# SignalForge - Project Handover & Engineering Overview
+# Insique - Project Handover & Engineering Overview
 
 ## Project Overview
 
-SignalForge is a full-stack personal market intelligence platform designed to help users:
+Insique is a full-stack personal market intelligence platform designed to help users:
 
 * Analyze stocks
 * Maintain watchlists
@@ -118,7 +118,7 @@ Auth Layer      Business Logic
 # Repository Structure
 
 ```text
-SignalForge/
+Insique/
 
 backend/
 ├── app/
@@ -1053,7 +1053,7 @@ Project Status:
 - Sprint 8A Complete
 - Sprint 8B Complete
 - Sprint 9A Complete
-- SignalForge V1 Complete
+- Insique V1 Complete
 
 Sprint 9B Status: COMPLETE
 
@@ -1115,4 +1115,4 @@ Project Status:
 - Sprint 8B Complete
 - Sprint 9A Complete
 - Sprint 9B Complete
-- SignalForge V1.1 Complete
+- Insique V1.1 Complete

@@ -5,7 +5,7 @@ import { LoginForm } from "@/components/auth/login-form";
 import { Signal } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Sign in - SignalForge",
+  title: "Sign in - Insique",
 };
 
 export default function LoginPage() {

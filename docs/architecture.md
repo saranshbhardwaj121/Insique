@@ -1,6 +1,6 @@
 # Architecture
 
-SignalForge uses a backend-first architecture with explicit separation between API, service, repository, and persistence layers.
+Insique uses a backend-first architecture with explicit separation between API, service, repository, and persistence layers.
 
 ## Principles
 

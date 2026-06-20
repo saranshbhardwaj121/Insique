@@ -8,7 +8,7 @@ export default function HomePage() {
       <header className="flex h-14 items-center justify-between border-b px-6">
         <div className="flex items-center gap-2 font-semibold">
           <Signal className="h-5 w-5 text-primary" />
-          <span>SignalForge</span>
+          <span>Insique</span>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" asChild>

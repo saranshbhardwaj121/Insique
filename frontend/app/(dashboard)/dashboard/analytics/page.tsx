@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AnalyticsPageContent } from "@/components/analytics/analytics-page-content";
 
 export const metadata: Metadata = {
-  title: "Analytics - SignalForge",
+  title: "Analytics - Insique",
 };
 
 export default function AnalyticsPage() {

@@ -51,7 +51,7 @@ export function AppSidebar({ collapsed = false, onToggle }: AppSidebarProps) {
         {!collapsed && (
           <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
             <Signal className="h-5 w-5 text-primary" />
-            <span>SignalForge</span>
+            <span>Insique</span>
           </Link>
         )}
         {collapsed && (

@@ -15,8 +15,8 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    app_name: str = "SignalForge"
-    project_name: str = "SignalForge"
+    app_name: str = "Insique"
+    project_name: str = "Insique"
     environment: str = "development"
     debug: bool = False
     api_v1_prefix: str = "/api/v1"
