@@ -1,25 +1,31 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useWatchlistsQuery } from "@/features/watchlists/hooks";
+import { useTickerContext } from "@/features/ticker/ticker-context";
 import {
   ListChecks,
   BarChart3,
   Signal,
   TrendingUp,
   Plus,
+  History,
+  X,
 } from "lucide-react";
 
 export function DashboardContent() {
   const { data: watchlists, isLoading, isError } = useWatchlistsQuery();
+  const { recentTickers, clearRecentTickers } = useTickerContext();
 
   const totalWatchlists = watchlists?.length ?? 0;
   const totalTickers = watchlists?.reduce((sum, wl) => sum + wl.items.length, 0) ?? 0;
   const recentWatchlists = watchlists?.slice(0, 3) ?? [];
   const hasWatchlists = totalWatchlists > 0;
+  const hasRecentTickers = recentTickers.length > 0;
 
   return (
     <div className="space-y-6">
@@ -125,6 +131,42 @@ export function DashboardContent() {
           </Link>
         </div>
       </div>
+
+      {hasRecentTickers && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <History className="h-4 w-4 text-muted-foreground" />
+              <h2 className="text-lg font-semibold">Recently Viewed</h2>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearRecentTickers}
+              className="text-muted-foreground"
+            >
+              <X className="h-3.5 w-3.5 mr-1" />
+              Clear
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {recentTickers.map((rt) => (
+              <Link
+                key={rt.ticker}
+                href={`/dashboard/analytics?ticker=${encodeURIComponent(rt.ticker)}`}
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="font-mono text-xs h-8"
+                >
+                  {rt.ticker}
+                </Button>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <div className="flex items-center justify-between mb-3">

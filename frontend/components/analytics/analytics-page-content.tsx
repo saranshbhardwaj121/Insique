@@ -1,18 +1,42 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AnalyticsSearchForm } from "@/components/analytics/analytics-search-form";
+import { TickerSearchForm } from "@/components/shared/ticker-search-form";
+import { TickerNavPills } from "@/components/shared/ticker-nav-pills";
 import { AnalyticsEmptyState } from "@/components/analytics/analytics-empty-state";
 import { IndicatorCard } from "@/components/analytics/indicator-card";
 import { MacdCard } from "@/components/analytics/macd-card";
 import { useAnalyticsQueries } from "@/features/analytics/hooks";
+import { useTickerContext } from "@/features/ticker/ticker-context";
 
-export function AnalyticsPageContent() {
-  const [activeTicker, setActiveTicker] = React.useState<string | null>(null);
+interface AnalyticsPageContentProps {
+  initialTicker: string | null;
+}
+
+export function AnalyticsPageContent({ initialTicker }: AnalyticsPageContentProps) {
+  const { activeTicker, setActiveTicker } = useTickerContext();
+  const router = useRouter();
   const queries = useAnalyticsQueries(activeTicker);
   const isFirstLoad = activeTicker !== null && queries.smaQuery.isLoading;
+  const initialized = React.useRef(false);
+
+  React.useEffect(() => {
+    if (initialTicker && !initialized.current) {
+      initialized.current = true;
+      setActiveTicker(initialTicker);
+    }
+  }, [initialTicker, setActiveTicker]);
+
+  const handleSearch = React.useCallback(
+    (ticker: string) => {
+      setActiveTicker(ticker);
+      router.replace(`/dashboard/analytics?ticker=${encodeURIComponent(ticker)}`);
+    },
+    [setActiveTicker, router]
+  );
 
   return (
     <div className="space-y-6">
@@ -38,7 +62,14 @@ export function AnalyticsPageContent() {
         )}
       </div>
 
-      <AnalyticsSearchForm onSearch={setActiveTicker} isLoading={isFirstLoad} />
+      <TickerSearchForm
+        isLoading={isFirstLoad}
+        placeholder="Search ticker (e.g. AAPL)"
+        buttonLabel="Analyze"
+        onSubmit={handleSearch}
+      />
+
+      {activeTicker && <TickerNavPills />}
 
       {!activeTicker ? (
         <AnalyticsEmptyState />

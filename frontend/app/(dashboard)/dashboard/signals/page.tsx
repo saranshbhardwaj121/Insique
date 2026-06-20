@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "Signals - Insique",
 };
 
-export default function SignalsPage() {
-  return <SignalsPageContent />;
+export default function SignalsPage({
+  searchParams,
+}: {
+  searchParams: { ticker?: string };
+}) {
+  return <SignalsPageContent initialTicker={searchParams.ticker ?? null} />;
 }

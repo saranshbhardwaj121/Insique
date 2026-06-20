@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { SignalsSearchForm } from "@/components/signals/signals-search-form";
 import { SignalsEmptyState } from "@/components/signals/signals-empty-state";
 import { SignalsHeroSkeleton, SignalsBreakdownSkeleton } from "@/components/signals/signals-skeleton";
 import { SignalsErrorState } from "@/components/signals/signals-error-state";
@@ -23,12 +22,8 @@ interface SingleTickerViewProps {
 }
 
 export function SingleTickerView({ activeTicker, onSearch, query }: SingleTickerViewProps) {
-  const isFirstLoad = activeTicker !== null && query.isLoading;
-
   return (
     <div className="space-y-6">
-      <SignalsSearchForm onSearch={onSearch} isLoading={isFirstLoad} />
-
       {!activeTicker ? (
         <SignalsEmptyState />
       ) : query.isLoading ? (

@@ -5,6 +5,7 @@ import { AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TickerActions } from "@/components/shared/ticker-actions";
 import { useWatchlistQuotesQuery } from "@/features/watchlists/hooks";
 import type { WatchlistQuoteItem } from "@/features/watchlists/types";
 
@@ -47,6 +48,9 @@ function QuoteRowDesktop({ quote }: { quote: WatchlistQuoteItem }) {
             <AlertCircle className="h-3.5 w-3.5 text-destructive" />
             {quote.error}
           </span>
+        </td>
+        <td className="py-2.5 px-3">
+          <TickerActions ticker={quote.ticker} />
         </td>
       </tr>
     );
@@ -113,6 +117,9 @@ function QuoteRowDesktop({ quote }: { quote: WatchlistQuoteItem }) {
           </Badge>
         )}
       </td>
+      <td className="py-2.5 px-3">
+        <TickerActions ticker={quote.ticker} />
+      </td>
     </tr>
   );
 }
@@ -121,9 +128,12 @@ function QuoteCardMobile({ quote }: { quote: WatchlistQuoteItem }) {
   if (quote.error) {
     return (
       <div className="rounded-lg border p-3">
-        <div className="flex items-center gap-1.5">
-          <span className="font-medium">{quote.ticker}</span>
-          <AlertCircle className="h-3.5 w-3.5 text-destructive" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <span className="font-medium">{quote.ticker}</span>
+            <AlertCircle className="h-3.5 w-3.5 text-destructive" />
+          </div>
+          <TickerActions ticker={quote.ticker} />
         </div>
         <p className="text-xs text-muted-foreground mt-1">{quote.error}</p>
       </div>
@@ -141,13 +151,16 @@ function QuoteCardMobile({ quote }: { quote: WatchlistQuoteItem }) {
   return (
     <div className="rounded-lg border p-3">
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex items-center gap-2 min-w-0">
           <span className="font-medium">{quote.ticker}</span>
           {quote.name && (
-            <span className="ml-1.5 text-xs text-muted-foreground">{quote.name}</span>
+            <span className="text-xs text-muted-foreground truncate">{quote.name}</span>
           )}
         </div>
-        <Badge variant="outline" className="text-xs">{quote.exchange || "--"}</Badge>
+        <div className="flex items-center gap-1">
+          <Badge variant="outline" className="text-xs">{quote.exchange || "--"}</Badge>
+          <TickerActions ticker={quote.ticker} />
+        </div>
       </div>
       <div className="flex items-baseline justify-between mt-2">
         <span className="text-lg font-semibold tabular-nums">
@@ -224,6 +237,7 @@ export function QuoteTable({ watchlistId }: QuoteTableProps) {
                   <th className="text-right py-2 px-3 font-medium hidden md:table-cell">Day Range</th>
                   <th className="text-right py-2 px-3 font-medium hidden lg:table-cell">Volume</th>
                   <th className="py-2 px-3 font-medium hidden lg:table-cell">Exch</th>
+                  <th className="py-2 px-3 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>

@@ -1,18 +1,45 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TickerSearchForm } from "@/components/shared/ticker-search-form";
+import { TickerNavPills } from "@/components/shared/ticker-nav-pills";
 import { SingleTickerView } from "@/components/signals/single-ticker-view";
 import { WatchlistSignalsView } from "@/components/signals/watchlist-signals-view";
 import { useTickerSignalQuery, useWatchlistSignalsQuery } from "@/features/signals/hooks";
+import { useTickerContext } from "@/features/ticker/ticker-context";
 
 type Tab = "ticker" | "watchlist";
 
-export function SignalsPageContent() {
-  const [activeTab, setActiveTab] = React.useState<Tab>("ticker");
-  const [activeTicker, setActiveTicker] = React.useState<string | null>(null);
+interface SignalsPageContentProps {
+  initialTicker: string | null;
+}
+
+export function SignalsPageContent({ initialTicker }: SignalsPageContentProps) {
+  const { activeTicker, setActiveTicker } = useTickerContext();
+  const router = useRouter();
+  const [activeTab, setActiveTab] = React.useState<Tab>(activeTicker ? "ticker" : "ticker");
   const [selectedWatchlistId, setSelectedWatchlistId] = React.useState<string | null>(null);
+  const initialized = React.useRef(false);
+
+  React.useEffect(() => {
+    if (initialTicker && !initialized.current) {
+      initialized.current = true;
+      setActiveTicker(initialTicker);
+      setActiveTab("ticker");
+    }
+  }, [initialTicker, setActiveTicker]);
+
+  const handleSearch = React.useCallback(
+    (ticker: string) => {
+      setActiveTicker(ticker);
+      setActiveTab("ticker");
+      router.replace(`/dashboard/signals?ticker=${encodeURIComponent(ticker)}`);
+    },
+    [setActiveTicker, router]
+  );
 
   const tickerQuery = useTickerSignalQuery(
     activeTab === "ticker" ? activeTicker : null
@@ -86,11 +113,19 @@ export function SignalsPageContent() {
       </div>
 
       {activeTab === "ticker" ? (
-        <SingleTickerView
-          activeTicker={activeTicker}
-          onSearch={setActiveTicker}
-          query={tickerQuery}
-        />
+        <div className="space-y-6">
+          <TickerSearchForm
+            placeholder="Search ticker (e.g. AAPL)"
+            buttonLabel="Analyze"
+            onSubmit={handleSearch}
+          />
+          {activeTicker && <TickerNavPills />}
+          <SingleTickerView
+            activeTicker={activeTicker}
+            onSearch={handleSearch}
+            query={tickerQuery}
+          />
+        </div>
       ) : (
         <WatchlistSignalsView
           selectedWatchlistId={selectedWatchlistId}

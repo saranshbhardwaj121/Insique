@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "Analytics - Insique",
 };
 
-export default function AnalyticsPage() {
-  return <AnalyticsPageContent />;
+export default function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: { ticker?: string };
+}) {
+  return <AnalyticsPageContent initialTicker={searchParams.ticker ?? null} />;
 }

@@ -1,19 +1,43 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MarketDataSearchForm } from "@/components/market-data/market-data-search-form";
+import { TickerSearchForm } from "@/components/shared/ticker-search-form";
+import { TickerNavPills } from "@/components/shared/ticker-nav-pills";
 import { MarketDataEmptyState } from "@/components/market-data/market-data-empty-state";
 import { MarketDataSkeleton } from "@/components/market-data/market-data-skeleton";
 import { MarketDataErrorState } from "@/components/market-data/market-data-error-state";
 import { MarketDataQuoteDisplay } from "@/components/market-data/market-data-quote-display";
 import { useQuoteQuery } from "@/features/market-data/hooks";
+import { useTickerContext } from "@/features/ticker/ticker-context";
 
-export function MarketDataPageContent() {
-  const [activeTicker, setActiveTicker] = React.useState<string | null>(null);
+interface MarketDataPageContentProps {
+  initialTicker: string | null;
+}
+
+export function MarketDataPageContent({ initialTicker }: MarketDataPageContentProps) {
+  const { activeTicker, setActiveTicker } = useTickerContext();
+  const router = useRouter();
   const query = useQuoteQuery(activeTicker);
   const isFirstLoad = activeTicker !== null && query.isLoading;
+  const initialized = React.useRef(false);
+
+  React.useEffect(() => {
+    if (initialTicker && !initialized.current) {
+      initialized.current = true;
+      setActiveTicker(initialTicker);
+    }
+  }, [initialTicker, setActiveTicker]);
+
+  const handleSearch = React.useCallback(
+    (ticker: string) => {
+      setActiveTicker(ticker);
+      router.replace(`/dashboard/market-data?ticker=${encodeURIComponent(ticker)}`);
+    },
+    [setActiveTicker, router]
+  );
 
   return (
     <div className="space-y-6">
@@ -39,7 +63,14 @@ export function MarketDataPageContent() {
         )}
       </div>
 
-      <MarketDataSearchForm onSearch={setActiveTicker} isLoading={isFirstLoad} />
+      <TickerSearchForm
+        isLoading={isFirstLoad}
+        placeholder="Search ticker (e.g. AAPL)"
+        buttonLabel="Lookup"
+        onSubmit={handleSearch}
+      />
+
+      {activeTicker && <TickerNavPills />}
 
       {!activeTicker ? (
         <MarketDataEmptyState />

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Loader2, X } from "lucide-react";
 import { useRemoveTickerMutation } from "@/features/watchlists/hooks";
+import { TickerActions } from "@/components/shared/ticker-actions";
 import type { WatchlistItem } from "@/features/watchlists/types";
 import { TickerEmptyState } from "@/components/watchlists/watchlist-empty-state";
 
@@ -35,9 +36,10 @@ export function TickerList({ watchlistId, items }: TickerListProps) {
       {items.map((item) => (
         <div
           key={item.ticker}
-          className="inline-flex items-center gap-1.5 rounded-md border bg-card px-3 py-1.5 text-sm"
+          className="inline-flex items-center gap-1 rounded-md border bg-card px-2.5 py-1.5 text-sm"
         >
           <span className="font-medium">{item.ticker}</span>
+          <TickerActions ticker={item.ticker} />
           <button
             onClick={() => handleRemove(item.ticker)}
             disabled={removingTicker === item.ticker}

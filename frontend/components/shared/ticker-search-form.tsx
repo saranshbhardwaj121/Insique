@@ -7,6 +7,7 @@ import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
+import { useTickerContext } from "@/features/ticker/ticker-context";
 
 const formSchema = z.object({
   ticker: z
@@ -17,12 +18,20 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-interface SignalsSearchFormProps {
-  onSearch: (ticker: string) => void;
+interface TickerSearchFormProps {
   isLoading?: boolean;
+  placeholder?: string;
+  buttonLabel?: string;
+  onSubmit?: (ticker: string) => void;
 }
 
-export function SignalsSearchForm({ onSearch, isLoading }: SignalsSearchFormProps) {
+export function TickerSearchForm({
+  isLoading,
+  placeholder = "Search ticker (e.g. AAPL)",
+  buttonLabel = "Search",
+  onSubmit: onSubmitProp,
+}: TickerSearchFormProps) {
+  const { setActiveTicker, activeTicker } = useTickerContext();
   const {
     register,
     handleSubmit,
@@ -32,9 +41,15 @@ export function SignalsSearchForm({ onSearch, isLoading }: SignalsSearchFormProp
     resolver: zodResolver(formSchema),
   });
 
+  const isFirstLoad = activeTicker !== null && isLoading;
+
   const onSubmit = (data: FormData) => {
     const ticker = data.ticker.toUpperCase().trim();
-    onSearch(ticker);
+    if (onSubmitProp) {
+      onSubmitProp(ticker);
+    } else {
+      setActiveTicker(ticker);
+    }
     reset();
   };
 
@@ -42,7 +57,7 @@ export function SignalsSearchForm({ onSearch, isLoading }: SignalsSearchFormProp
     <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-2 max-w-md">
       <div className="flex-1 space-y-1">
         <Input
-          placeholder="Search ticker (e.g. AAPL)"
+          placeholder={placeholder}
           {...register("ticker")}
           className={errors.ticker ? "border-destructive" : ""}
         />
@@ -50,13 +65,13 @@ export function SignalsSearchForm({ onSearch, isLoading }: SignalsSearchFormProp
           <p className="text-xs font-medium text-destructive">{errors.ticker.message}</p>
         )}
       </div>
-      <Button type="submit" disabled={isLoading}>
-        {isLoading ? (
+      <Button type="submit" disabled={isFirstLoad}>
+        {isFirstLoad ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
           <Search className="h-4 w-4" />
         )}
-        <span className="ml-2 hidden sm:inline">Analyze</span>
+        <span className="ml-2 hidden sm:inline">{buttonLabel}</span>
       </Button>
     </form>
   );

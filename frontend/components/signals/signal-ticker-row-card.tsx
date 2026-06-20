@@ -4,6 +4,7 @@ import * as React from "react";
 import { AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { TickerActions } from "@/components/shared/ticker-actions";
 import type { WatchlistSignalItem } from "@/features/signals/types";
 
 interface SignalTickerRowCardProps {
@@ -23,9 +24,12 @@ export function SignalTickerRowCard({ item }: SignalTickerRowCardProps) {
             <span className="font-medium">{item.ticker}</span>
             <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
           </div>
-          <span className="text-sm text-muted-foreground truncate ml-2">
-            {item.error}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground truncate">
+              {item.error}
+            </span>
+            <TickerActions ticker={item.ticker} />
+          </div>
         </CardContent>
       </Card>
     );
@@ -59,7 +63,7 @@ export function SignalTickerRowCard({ item }: SignalTickerRowCardProps) {
           <span className="font-medium">{summary.ticker}</span>
           <Badge className={badgeClass}>{summary.rating}</Badge>
         </div>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground shrink-0">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground shrink-0">
           <span className="tabular-nums">{Math.abs(summary.score)}/6</span>
           <div className="flex flex-col items-end">
             <span className="font-medium tabular-nums">
@@ -72,6 +76,7 @@ export function SignalTickerRowCard({ item }: SignalTickerRowCardProps) {
               />
             </div>
           </div>
+          <TickerActions ticker={summary.ticker} />
         </div>
       </CardContent>
     </Card>
