@@ -9,11 +9,15 @@ Insique uses a backend-first architecture with explicit separation between API, 
 - Avoid client-side direct calls to market APIs.
 - Preserve a clean path from Streamlit MVP to React production UI.
 
-## Planned Modules
+## Modules
 
 - Authentication and authorization
 - User profiles and watchlists
 - Market data ingestion and caching
 - Technical indicator computation
-- Chart intelligence rules
+- Signal generation and scoring
+- Alert engine with scheduled evaluation
+- In-app notifications
+- Chart intelligence and visualization
 - Trade journaling and analytics
+- Smart search with autocomplete

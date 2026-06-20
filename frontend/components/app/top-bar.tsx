@@ -65,7 +65,7 @@ export function TopBar() {
         />
       </div>
 
-      <div className="flex-1 sm:flex-none" />
+      <div className="flex-1" />
 
       <NotificationBell />
 

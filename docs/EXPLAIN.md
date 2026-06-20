@@ -123,18 +123,20 @@ Insique/
 backend/
 ├── app/
 │   ├── api/
+│   │   ├── deps.py
+│   │   └── v1/
+│   │       └── routes/
 │   ├── core/
 │   ├── db/
 │   ├── models/
 │   ├── repositories/
 │   ├── schemas/
-│   ├── services/
-│   └── dependencies/
+│   └── services/
 │
 ├── alembic/
 ├── tests/
 │
-frontend_streamlit/
+frontend/
 docs/
 ```
 
@@ -575,102 +577,36 @@ Use identifier field.
 * Watchlist Repository
 * Watchlist Service
 * Watchlist Schemas
+* Stock Search & Autocomplete
+* Market Data (quotes, history)
+* Analytics (SMA, EMA, RSI, MACD)
+* Signals & Watchlist Signals
+* Visual Charts (Recharts)
+* Settings & Profile
+* Dashboard
+* Landing Page
+* Branding Migration (Insique)
+* Connectivity Layer (BFF proxy, auth forwarding)
+* Smart Search (company name, exchange-aware)
+* Alert Engine (CRUD, evaluation, scheduling)
+* In-App Notifications
 
 ## Partially Complete
 
-* Trades
-* Market Data
-
-Trades and Market Data are currently scaffolded only.
+* Trades (scaffolded only)
 
 ## Not Started
 
-* Stock Search
-* Data Ingestion
-* Charting
-* Technical Analysis Engine
-* Trade Analytics Dashboard
+* Portfolio Tracking
+* Paper Trading
+* Backtesting
+* ML Forecasting
+* Live Market Updates
 * Deployment
 
 ---
 
-# Sprint 2 Roadmap
-
-## Watchlists
-
-Status:
-
-```text
-Completed
-```
-
-Implemented:
-
-* Watchlist CRUD
-* Watchlist Repository
-* Watchlist Service
-* Watchlist Schemas
-* Integration Tests
-
-Goals:
-
-* Create Watchlist
-* Rename Watchlist
-* Delete Watchlist
-* Add Ticker
-* Remove Ticker
-* User Ownership Validation
-
-Success Criteria:
-
-User can maintain multiple watchlists through authenticated endpoints.
-
----
-
-# Sprint 3 Roadmap
-
-## Market Data
-
-Goals:
-
-* Stock Search
-* Historical Data Fetching
-* yfinance Integration
-* Data Persistence
-
----
-
-# Sprint 4 Roadmap
-
-## Trade Journal
-
-Goals:
-
-* Create Trades
-* Edit Trades
-* Delete Trades
-* Trade History
-
----
-
-# Sprint 5 Roadmap
-
-## Analytics Engine
-
-Goals:
-
-* Support/Resistance
-* Trend Detection
-* Volume Analysis
-* Momentum Analysis
-
----
-
-# Sprint 6 Roadmap
-
-## Deployment
-
-Goals:
+*Older Sprint roadmaps (Sprints 2–6) have been superseded by completed sprint records below.*
 
 * Docker
 * CI/CD
@@ -694,22 +630,6 @@ Before modifying code:
 8. Preserve JWT authentication architecture.
 
 ---
-
-# Recommended Next Task
-
-Sprint 2:
-
-Implement Watchlist CRUD.
-
-Priority Order:
-
-1. Create Watchlist
-2. List User Watchlists
-3. Add Ticker
-4. Remove Ticker
-5. Delete Watchlist
-
-This is the highest-value next feature and the natural continuation of the current architecture.
 
 Sprint 3A Status: COMPLETE
 
