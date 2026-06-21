@@ -2026,3 +2026,516 @@ Future Expansion:
 * Notification Preferences
 
 Status: COMPLETE
+
+# Sprint 11C — Housekeeping & Professionalization
+
+## Objective
+
+Improve repository maintainability, development experience, documentation accuracy, and project structure without introducing new user-facing features.
+
+---
+
+## Problem Statement
+
+After multiple major feature sprints and the SignalForge → Insique migration, the repository contained several structural inconsistencies and outdated artifacts.
+
+Examples included:
+
+* Tracked build artifacts
+* Legacy Streamlit code
+* Stale documentation references
+* Missing package initialization files
+* Inconsistent project naming
+* Outdated architecture references
+
+Although functionality remained unaffected, these issues reduced maintainability and increased onboarding complexity.
+
+---
+
+## Features Implemented
+
+### Repository Cleanup
+
+Removed obsolete and generated files that should not be tracked in version control.
+
+Removed:
+
+* insique.egg-info
+* Legacy build artifacts
+* Orphaned virtual environment remnants
+
+Benefits:
+
+* Cleaner repository
+* Reduced Git noise
+* Improved developer experience
+
+---
+
+### Git Ignore Standardization
+
+Reviewed and cleaned .gitignore configuration.
+
+Improvements:
+
+* Removed duplicate entries
+* Added missing Insique artifacts
+* Updated repository-specific exclusions
+
+Benefits:
+
+* Prevents accidental commits
+* Improves consistency
+* Reduces repository clutter
+
+---
+
+### Package Standardization
+
+Added missing **init**.py files across backend packages.
+
+Affected Areas:
+
+* API
+* Core
+* Database
+* Repositories
+* Schemas
+* Services
+
+Benefits:
+
+* Improved tooling support
+* Better IDE navigation
+* Cleaner package structure
+
+---
+
+### Documentation Audit
+
+Reviewed and updated project documentation.
+
+Updated:
+
+* EXPLAIN.md
+* architecture.md
+
+Fixes:
+
+* Corrected stale paths
+* Removed outdated references
+* Updated module inventory
+* Removed obsolete roadmap sections
+
+Benefits:
+
+* Improved accuracy
+* Better onboarding
+* Easier maintenance
+
+---
+
+### Branding Consistency
+
+Completed additional migration cleanup following the SignalForge → Insique rebrand.
+
+Updated:
+
+* Environment configuration
+* Internal references
+* Documentation references
+
+Benefits:
+
+* Consistent project identity
+* Reduced confusion
+* Cleaner repository history
+
+---
+
+### Streamlit Legacy Removal
+
+Removed the deprecated Streamlit prototype.
+
+Removed:
+
+frontend_streamlit/
+
+Benefits:
+
+* Single frontend implementation
+* Reduced maintenance burden
+* Clearer architecture
+
+---
+
+## Architecture Changes
+
+### Model Registration Improvements
+
+Updated model exports and database registration.
+
+Added:
+
+* Alert exports
+* Notification exports
+* Alembic model discovery support
+
+Benefits:
+
+* Reliable migrations
+* Improved model visibility
+* Better schema management
+
+---
+
+### Route Registration Improvements
+
+Updated API route registration.
+
+Added:
+
+* Alerts
+* Notifications
+
+Benefits:
+
+* Improved consistency
+* Better module discoverability
+
+---
+
+## Technical Improvements
+
+### Repository Hygiene
+
+Improved:
+
+* Build artifact management
+* Documentation accuracy
+* Package structure
+
+Benefits:
+
+* More professional repository
+* Easier contributor onboarding
+* Reduced maintenance overhead
+
+---
+
+### Development Experience
+
+Improved:
+
+* IDE compatibility
+* Static analysis support
+* Package navigation
+
+Benefits:
+
+* Faster development
+* Improved code discovery
+* Better tooling integration
+
+---
+
+## Testing & Validation
+
+Results:
+
+* 192 tests passing
+* Frontend build successful
+* Backend startup verified
+* Documentation audit completed
+
+---
+
+## Outcome
+
+Sprint 11C successfully improved the overall quality and maintainability of the Insique codebase.
+
+No new features were introduced.
+
+Focus Areas:
+
+* Repository cleanup
+* Documentation accuracy
+* Architecture consistency
+* Professionalization
+
+Status: COMPLETE
+
+# Sprint 11D — Performance Optimization
+
+## Objective
+
+Improve application responsiveness by identifying and eliminating major performance bottlenecks across the frontend, backend, and market data pipeline.
+
+---
+
+## Problem Statement
+
+As the platform matured, several pages began feeling noticeably slow.
+
+Symptoms included:
+
+* Slow watchlist loading
+* Delayed dashboard updates
+* Repeated market data requests
+* Excessive external API calls
+
+Initial assumptions suggested frontend performance issues.
+
+A dedicated performance audit revealed that the primary bottlenecks originated from backend request patterns and market data retrieval.
+
+---
+
+## Performance Audit Findings
+
+Major Findings:
+
+1. Sequential Yahoo Finance requests
+2. No quote caching layer
+3. Duplicate market data retrieval
+4. Alert endpoint N+1 query pattern
+5. Excessive notification polling
+
+Estimated Impact:
+
+* Watchlists: 10–30 second delays
+* Dashboard responsiveness degradation
+* Increased external API dependency
+
+---
+
+## Features Implemented
+
+### Parallel Market Data Retrieval
+
+Replaced sequential ticker processing with concurrent execution.
+
+Before:
+
+Ticker A
+
+↓
+
+Ticker B
+
+↓
+
+Ticker C
+
+↓
+
+Ticker D
+
+After:
+
+Ticker A
+
+Ticker B
+
+Ticker C
+
+Ticker D
+
+processed simultaneously
+
+Benefits:
+
+* Significant watchlist acceleration
+* Reduced API wait times
+* Better scalability
+
+---
+
+### Quote Caching
+
+Implemented in-memory quote caching.
+
+Configuration:
+
+* 60 second TTL
+
+Cached Data:
+
+* Quotes
+* Market snapshots
+* Signal inputs
+
+Benefits:
+
+* Reduced Yahoo Finance requests
+* Faster repeated lookups
+* Lower external dependency load
+
+---
+
+### Duplicate Request Elimination
+
+Reviewed ticker context and data-fetching flows.
+
+Removed:
+
+* Duplicate prefetches
+* Redundant network requests
+* Repeated quote retrieval
+
+Benefits:
+
+* Reduced network traffic
+* Improved responsiveness
+* Lower backend load
+
+---
+
+### Alert Query Optimization
+
+Resolved N+1 query patterns within alert retrieval workflows.
+
+Benefits:
+
+* Faster alert pages
+* Improved database efficiency
+* Better scalability
+
+---
+
+### Notification Polling Optimization
+
+Adjusted notification refresh strategy.
+
+Benefits:
+
+* Reduced background traffic
+* Lower server load
+* Improved client efficiency
+
+---
+
+## Architecture Changes
+
+### Market Data Pipeline
+
+Before:
+
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Yahoo Finance
+
+(repeated for every request)
+
+After:
+
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Cache
+
+↓
+
+Yahoo Finance (when required)
+
+Benefits:
+
+* Reduced latency
+* Reduced API dependence
+* Better user experience
+
+---
+
+### Watchlist Service Improvements
+
+Updated quote retrieval architecture to support concurrent execution.
+
+Benefits:
+
+* Faster portfolio loading
+* Improved responsiveness
+* Better scalability for larger watchlists
+
+---
+
+## Technical Improvements
+
+### External API Efficiency
+
+Reduced:
+
+* Duplicate requests
+* Unnecessary Yahoo calls
+* Repeated market data retrieval
+
+Benefits:
+
+* Lower latency
+* Improved reliability
+* Better scalability
+
+---
+
+### Frontend Responsiveness
+
+Verified production build performance.
+
+Observation:
+
+Production builds performed significantly faster than development builds.
+
+Benefits:
+
+* Improved user experience
+* Faster page rendering
+* Reduced perceived latency
+
+---
+
+## Testing & Validation
+
+Validation Included:
+
+* Performance audit
+* Watchlist benchmarks
+* API response verification
+* Build verification
+
+Results:
+
+* Tests passing
+* Production build successful
+* Dashboard responsiveness improved
+* Watchlist performance significantly improved
+
+---
+
+## Outcome
+
+Sprint 11D successfully improved platform responsiveness without introducing new user-facing functionality.
+
+Performance Gains:
+
+* Faster watchlist loading
+* Reduced Yahoo Finance dependency
+* Lower API traffic
+* Improved dashboard responsiveness
+
+This sprint established a scalable foundation for future modules including:
+
+* Portfolio Tracking
+* Paper Trading
+* Backtesting
+* Strategy Evaluation
+
+Status: COMPLETE
