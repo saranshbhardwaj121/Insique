@@ -31,4 +31,11 @@ export const queryKeys = {
     list: (limit: number) => ["notifications", "list", limit] as const,
     count: ["notifications", "count"] as const,
   },
+  portfolio: {
+    holdings: {
+      all: ["portfolio", "holdings"] as const,
+      detail: (id: string) => ["portfolio", "holdings", id] as const,
+    },
+    summary: ["portfolio", "summary"] as const,
+  },
 } as const;

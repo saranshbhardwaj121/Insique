@@ -1,4 +1,5 @@
 from backend.app.models.alert import Alert, TriggeredAlert
+from backend.app.models.holding import Holding
 from backend.app.models.market_data import MarketData
 from backend.app.models.notification import Notification
 from backend.app.models.refresh_token import RefreshToken
@@ -8,6 +9,6 @@ from backend.app.models.watchlist import Watchlist
 from backend.app.models.watchlist_item import WatchlistItem
 
 __all__ = [
-    "Alert", "MarketData", "Notification", "RefreshToken", "Trade",
+    "Alert", "Holding", "MarketData", "Notification", "RefreshToken", "Trade",
     "TriggeredAlert", "User", "Watchlist", "WatchlistItem",
 ]

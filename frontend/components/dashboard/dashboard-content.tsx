@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useWatchlistsQuery } from "@/features/watchlists/hooks";
+import { useHoldingsQuery } from "@/features/portfolio/hooks";
 import { useTickerContext } from "@/features/ticker/ticker-context";
 import {
   ListChecks,
   BarChart3,
   Signal,
   TrendingUp,
+  PieChart,
   Plus,
   History,
   X,
@@ -19,10 +21,12 @@ import {
 
 export function DashboardContent() {
   const { data: watchlists, isLoading, isError } = useWatchlistsQuery();
+  const { data: holdings } = useHoldingsQuery();
   const { recentTickers, clearRecentTickers } = useTickerContext();
 
   const totalWatchlists = watchlists?.length ?? 0;
   const totalTickers = watchlists?.reduce((sum, wl) => sum + wl.items.length, 0) ?? 0;
+  const totalHoldings = holdings?.length ?? 0;
   const recentWatchlists = watchlists?.slice(0, 3) ?? [];
   const hasWatchlists = totalWatchlists > 0;
   const hasRecentTickers = recentTickers.length > 0;
@@ -88,11 +92,24 @@ export function DashboardContent() {
             )}
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Portfolio</CardTitle>
+            <PieChart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalHoldings}</div>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {totalHoldings === 1 ? "holding tracked" : "holdings tracked"}
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <div>
         <h2 className="text-lg font-semibold mb-3">Quick Actions</h2>
-        <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
+        <div className="grid gap-3 grid-cols-2 md:grid-cols-5">
           <Link href="/dashboard/watchlists">
             <Card className="hover:bg-accent transition-colors cursor-pointer h-full">
               <CardContent className="flex flex-col items-center justify-center py-4 text-center">
@@ -126,6 +143,15 @@ export function DashboardContent() {
                 <TrendingUp className="h-6 w-6 text-muted-foreground mb-2" />
                 <p className="text-sm font-medium">Market Data</p>
                 <p className="text-xs text-muted-foreground">Real-time quotes</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/dashboard/portfolio">
+            <Card className="hover:bg-accent transition-colors cursor-pointer h-full">
+              <CardContent className="flex flex-col items-center justify-center py-4 text-center">
+                <PieChart className="h-6 w-6 text-muted-foreground mb-2" />
+                <p className="text-sm font-medium">Portfolio</p>
+                <p className="text-xs text-muted-foreground">Track holdings</p>
               </CardContent>
             </Card>
           </Link>

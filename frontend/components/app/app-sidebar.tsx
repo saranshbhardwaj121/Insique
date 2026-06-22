@@ -13,6 +13,7 @@ import {
   TrendingUp,
   BarChart3,
   Signal,
+  PieChart,
   Bell,
   Settings,
   ChevronLeft,
@@ -32,6 +33,7 @@ const navItems: NavItem[] = [
   { label: "Market Data", href: "/dashboard/market-data", icon: <TrendingUp className="h-4 w-4" /> },
   { label: "Analytics", href: "/dashboard/analytics", icon: <BarChart3 className="h-4 w-4" /> },
   { label: "Signals", href: "/dashboard/signals", icon: <Signal className="h-4 w-4" /> },
+  { label: "Portfolio", href: "/dashboard/portfolio", icon: <PieChart className="h-4 w-4" /> },
   { label: "Alerts", href: "/dashboard/alerts", icon: <Bell className="h-4 w-4" /> },
   { label: "Settings", href: "/dashboard/settings", icon: <Settings className="h-4 w-4" /> },
 ];

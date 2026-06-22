@@ -26,3 +26,4 @@ class User(TimestampMixin, Base):
     )
     alerts = relationship("Alert", back_populates="user", cascade="all, delete-orphan")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+    holdings = relationship("Holding", back_populates="user", cascade="all, delete-orphan")

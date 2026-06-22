@@ -45,4 +45,9 @@ export const API_ROUTES = {
     MARK_READ: (id: string) => `/notifications/${id}/read`,
     MARK_ALL_READ: "/notifications/read-all",
   },
+  PORTFOLIO: {
+    HOLDINGS: "/portfolio/holdings",
+    HOLDING: (id: string) => `/portfolio/holdings/${id}`,
+    SUMMARY: "/portfolio/summary",
+  },
 } as const;
