@@ -1,7 +1,10 @@
+import logging
 from datetime import datetime, timezone
 from uuid import UUID
 
 from sqlalchemy.orm import Session
+
+logger = logging.getLogger(__name__)
 
 from backend.app.core.security import (
     create_access_token,
@@ -24,6 +27,8 @@ class AuthService:
         self.refresh_tokens = RefreshTokenRepository(session)
 
     def register_user(self, username: str, email: str, password: str) -> User:
+        logger.warning("register_user: username=%r, email=%r, password type=%s, password len=%d, password repr=%r",
+                       username, email, type(password).__name__, len(password), password[:20])
         existing_username = self.users.get_by_username(username)
         if existing_username is not None:
             raise ValueError("Username already exists")

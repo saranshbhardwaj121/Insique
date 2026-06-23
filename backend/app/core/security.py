@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid4
@@ -5,13 +6,23 @@ from uuid import uuid4
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
+logger = logging.getLogger(__name__)
+
 from backend.app.core.config import get_settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    logger.warning("hash_password called: type=%s, len=%d, repr=%r",
+                   type(password).__name__, len(password), password[:20])
+    try:
+        result = pwd_context.hash(password)
+        logger.warning("hash_password succeeded: hash starts with %r", result[:10])
+        return result
+    except Exception as exc:
+        logger.exception("hash_password FAILED: %s: %s", type(exc).__name__, exc)
+        raise
 
 
 def verify_password(password: str, password_hash: str) -> bool:

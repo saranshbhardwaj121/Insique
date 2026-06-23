@@ -1,5 +1,9 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
+
+logger = logging.getLogger(__name__)
 
 from backend.app.api.deps import get_current_user, get_session
 from backend.app.core.config import get_settings
@@ -25,6 +29,9 @@ login_rate_limiter = LoginRateLimiter(
 
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
 def register(payload: RegisterRequest, session: Session = Depends(get_session)) -> UserRead:
+    logger.warning("POST /register: username=%r, email=%r, password_type=%s, password_len=%d, password_repr=%r",
+                   payload.username, payload.email,
+                   type(payload.password).__name__, len(payload.password), payload.password[:20])
     service = AuthService(session)
     try:
         user = service.register_user(
@@ -34,6 +41,7 @@ def register(payload: RegisterRequest, session: Session = Depends(get_session)) 
         )
         return UserRead.model_validate(user)
     except ValueError as exc:
+        logger.exception("POST /register FAILED: %s", exc)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
