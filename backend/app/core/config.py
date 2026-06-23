@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -26,10 +26,18 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 30
     database_url: str
     jwt_algorithm: str = "HS256"
+
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
     market_data_cache_days: int = 7
     login_rate_limit_attempts: int = 5
     login_rate_limit_window_seconds: int = 60
+
+    @field_validator("database_url")
+    @classmethod
+    def ensure_psycopg_driver(cls, v: str) -> str:
+        if v and v.startswith("postgresql://") and "+" not in v.split("://")[0]:
+            v = v.replace("postgresql://", "postgresql+psycopg://", 1)
+        return v
 
 
 
