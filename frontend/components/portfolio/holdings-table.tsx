@@ -75,7 +75,7 @@ export function HoldingsTable({
         </Button>
       </div>
 
-      <div className="rounded-md border">
+      <div className="hidden sm:block rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -122,7 +122,7 @@ export function HoldingsTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-8 w-8 sm:h-9 sm:w-9"
                       onClick={() => onEdit(h)}
                       title="Edit holding"
                     >
@@ -131,7 +131,7 @@ export function HoldingsTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      className="h-8 w-8 sm:h-9 sm:w-9 text-muted-foreground hover:text-destructive"
                       onClick={() => onDelete(h)}
                       title="Remove holding"
                     >
@@ -143,6 +143,54 @@ export function HoldingsTable({
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="sm:hidden space-y-2">
+        {holdings.map((h) => (
+          <div key={h.id} className="rounded-lg border p-3">
+            <div className="flex items-center justify-between">
+              <span className="font-mono font-medium">{h.ticker}</span>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => onEdit(h)} title="Edit holding">
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive" onClick={() => onDelete(h)} title="Remove holding">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
+              <div>
+                <span className="text-xs text-muted-foreground">Qty</span>
+                <p className="font-mono">{h.quantity}</p>
+              </div>
+              <div>
+                <span className="text-xs text-muted-foreground">Mkt Value</span>
+                <p className="font-mono">{formatCurrency(h.market_value)}</p>
+              </div>
+              <div>
+                <span className="text-xs text-muted-foreground">Avg Cost</span>
+                <p className="font-mono">{formatCurrency(h.average_cost_basis)}</p>
+              </div>
+              <div>
+                <span className="text-xs text-muted-foreground">Last Price</span>
+                <p className="font-mono">{formatCurrency(h.current_price)}</p>
+              </div>
+              <div>
+                <span className="text-xs text-muted-foreground">P&amp;L</span>
+                <p className={`font-mono ${pnlColor(h.profit_loss)}`}>{formatCurrency(h.profit_loss)}</p>
+              </div>
+              <div>
+                <span className="text-xs text-muted-foreground">P&amp;L %</span>
+                <p className={`font-mono ${pnlColor(h.profit_loss_percent)}`}>{formatPct(h.profit_loss_percent)}</p>
+              </div>
+              <div>
+                <span className="text-xs text-muted-foreground">Alloc</span>
+                <p className="font-mono">{h.allocation_percent != null ? `${h.allocation_percent.toFixed(1)}%` : "--"}</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

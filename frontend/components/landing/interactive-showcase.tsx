@@ -119,7 +119,7 @@ export function InteractiveShowcase() {
         </div>
 
         <div ref={containerRef}>
-          <div className="mb-6 flex gap-1 rounded-lg bg-secondary/50 p-1">
+          <div className="mb-6 flex gap-1 rounded-lg bg-secondary/50 p-1 overflow-x-auto">
             {tabs.map((tab, index) => (
               <button
                 key={tab.id}

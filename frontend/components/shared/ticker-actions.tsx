@@ -18,8 +18,8 @@ export function TickerActions({ ticker, className }: TickerActionsProps) {
         href={`/dashboard/analytics?ticker=${encodeURIComponent(ticker)}`}
         title="View Analytics"
       >
-        <Button variant="ghost" size="icon" className="h-7 w-7">
-          <BarChart3 className="h-3.5 w-3.5" />
+        <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9">
+          <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           <span className="sr-only">Analytics for {ticker}</span>
         </Button>
       </Link>
@@ -27,8 +27,8 @@ export function TickerActions({ ticker, className }: TickerActionsProps) {
         href={`/dashboard/market-data?ticker=${encodeURIComponent(ticker)}`}
         title="View Market Data"
       >
-        <Button variant="ghost" size="icon" className="h-7 w-7">
-          <TrendingUp className="h-3.5 w-3.5" />
+        <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9">
+          <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           <span className="sr-only">Market Data for {ticker}</span>
         </Button>
       </Link>
@@ -36,8 +36,8 @@ export function TickerActions({ ticker, className }: TickerActionsProps) {
         href={`/dashboard/signals?ticker=${encodeURIComponent(ticker)}`}
         title="View Signals"
       >
-        <Button variant="ghost" size="icon" className="h-7 w-7">
-          <Signal className="h-3.5 w-3.5" />
+        <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9">
+          <Signal className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           <span className="sr-only">Signals for {ticker}</span>
         </Button>
       </Link>

@@ -2,8 +2,14 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const navItems = [
   { label: "Features", href: "#features" },
@@ -12,12 +18,17 @@ const navItems = [
 
 export function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleNavClick = () => {
+    setMobileOpen(false);
+  };
 
   return (
     <header
@@ -52,9 +63,41 @@ export function Nav() {
           <Button variant="ghost" size="sm" asChild className="hidden md:inline-flex">
             <Link href="/login">Sign in</Link>
           </Button>
-          <Button size="sm" asChild>
+          <Button size="sm" asChild className="hidden md:inline-flex">
             <Link href="/register">Try Insique Free</Link>
           </Button>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="ghost" size="icon">
+                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-64 p-6">
+              <div className="flex flex-col gap-4 mt-8">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={handleNavClick}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+                <hr className="border-border" />
+                <Link
+                  href="/login"
+                  onClick={handleNavClick}
+                  className="text-sm font-medium text-foreground transition-colors hover:text-primary"
+                >
+                  Sign in
+                </Link>
+                <Button size="sm" asChild className="mt-2">
+                  <Link href="/register" onClick={handleNavClick}>Try Insique Free</Link>
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>

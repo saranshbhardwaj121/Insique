@@ -3,10 +3,17 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Moon, Sun, LogOut } from "lucide-react";
+import { Moon, Sun, LogOut, Search } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/notification-bell";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +55,16 @@ export function TopBar() {
     [router]
   );
 
+  const [searchOpen, setSearchOpen] = React.useState(false);
+
+  const handleMobileSearch = React.useCallback(
+    (ticker: string) => {
+      setSearchOpen(false);
+      router.push(`/dashboard/analytics?ticker=${encodeURIComponent(ticker)}`);
+    },
+    [router]
+  );
+
   const initials = user?.username
     ? user.username.slice(0, 2).toUpperCase()
     : "SF";
@@ -64,6 +81,24 @@ export function TopBar() {
           compact
         />
       </div>
+
+      <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <DialogTrigger asChild className="sm:hidden">
+          <Button variant="ghost" size="icon">
+            <Search className="h-5 w-5" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="top-1/3">
+          <DialogHeader>
+            <DialogTitle>Search ticker</DialogTitle>
+          </DialogHeader>
+          <TickerSearchForm
+            placeholder="Search ticker..."
+            onSubmit={handleMobileSearch}
+            compact
+          />
+        </DialogContent>
+      </Dialog>
 
       <div className="flex-1" />
 

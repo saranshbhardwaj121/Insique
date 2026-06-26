@@ -36,13 +36,14 @@ export function WatchlistCard({
             e.stopPropagation();
             onDelete();
           }}
-          className="ml-2 rounded-md p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+          className="ml-2 rounded-md p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
           title="Delete watchlist"
+          aria-label="Delete watchlist"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
