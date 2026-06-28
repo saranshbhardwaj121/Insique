@@ -35,7 +35,7 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = React.useState<number | null>(null);
 
   return (
-    <section className="border-t border-border/40 py-24">
+    <section className="border-t border-border/10 py-24">
       <div className="mx-auto max-w-3xl px-6">
         <div className="mb-12 text-center">
           <h2 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -67,7 +67,7 @@ export function FAQ() {
                   openIndex === index ? "max-h-48" : "max-h-0"
                 )}
               >
-                <p className="border-t border-border/50 px-5 py-4 text-sm leading-relaxed text-muted-foreground">
+                <p className="border-t border-border/10 px-5 py-4 text-sm leading-relaxed text-muted-foreground">
                   {faq.a}
                 </p>
               </div>

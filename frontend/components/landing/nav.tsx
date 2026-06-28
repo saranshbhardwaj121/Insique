@@ -35,7 +35,7 @@ export function Nav() {
       className={cn(
         "fixed top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "border-b border-border/50 bg-background/80 backdrop-blur-xl"
+          ? "border-b border-border/10 bg-background/80 backdrop-blur-xl"
           : "bg-transparent"
       )}
     >
@@ -82,7 +82,7 @@ export function Nav() {
                     {item.label}
                   </Link>
                 ))}
-                <hr className="border-border" />
+                <hr className="border-border/40" />
                 <Link
                   href="/login"
                   onClick={handleNavClick}

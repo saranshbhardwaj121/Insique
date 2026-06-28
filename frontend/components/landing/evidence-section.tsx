@@ -25,7 +25,7 @@ const points = [
 
 export function EvidenceSection() {
   return (
-    <section className="border-y border-border/40 py-24">
+    <section className="border-y border-border/10 py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-12 text-center">
           <h2 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/40 py-12">
+    <footer className="border-t border-border/10 py-12">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col items-center justify-between gap-8 sm:flex-row">
           <div>
@@ -45,7 +45,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-border/30 pt-6 text-[10px] text-muted-foreground/60 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-border/10 pt-6 text-[10px] text-muted-foreground/60 sm:flex-row">
           <p>&copy; {new Date().getFullYear()} Insique. All rights reserved.</p>
           <p>Built with FastAPI + Next.js + PostgreSQL</p>
         </div>
