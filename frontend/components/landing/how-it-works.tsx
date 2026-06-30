@@ -11,13 +11,13 @@ const steps = [
     number: "02",
     icon: BarChart3,
     title: "Get signals",
-    description: "Insique analyzes RSI, MACD, SMA, and EMA on every ticker. A combined confidence score tells you the story.",
+    description: "Insique analyzes RSI, MACD, SMA, and EMA on every ticker. A combined confidence score shows you the strength of each signal.",
   },
   {
     number: "03",
     icon: Target,
     title: "Decide with confidence",
-    description: "Every trade backed by data, not emotion. Clear signals. Transparent methodology. No black boxes.",
+    description: "Clear signals and transparent methodology help you make informed decisions. No guesswork, no hype.",
   },
 ];
 

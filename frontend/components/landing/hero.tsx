@@ -14,26 +14,25 @@ export function Hero() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
           </span>
-          Market intelligence platform — free during beta
+          Free during beta. No credit card needed.
         </div>
 
         <h1 className="animate-fade-in text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-          Decide with{" "}
-          <span className="text-primary">evidence</span>.
+          Analyze markets.{" "}
+          <span className="text-primary">Build confidence</span>.
         </h1>
 
         <p className="animate-fade-in-up mt-6 max-w-2xl text-balance text-lg text-muted-foreground sm:text-xl">
-          Insique transforms market noise into structured intelligence.
-          Real-time analytics, technical signals, and evidence-based insights
-          — so every decision has a reason.
+          Real-time analytics and technical signals for smarter trading decisions.
+          RSI, MACD, SMA, and EMA help you see what the data says before you act.
         </p>
 
         <div className="animate-fade-in-up mt-8 flex flex-col items-center gap-4 sm:flex-row">
           <Button size="lg" asChild className="h-12 px-8 text-base">
-            <Link href="/register">Try Insique Free &rarr;</Link>
+            <Link href="/register">Get Started &rarr;</Link>
           </Button>
           <Button size="lg" variant="outline" asChild className="h-12 px-8 text-base">
-            <Link href="#how-it-works">See how it works</Link>
+            <Link href="#features">Explore Features</Link>
           </Button>
         </div>
 

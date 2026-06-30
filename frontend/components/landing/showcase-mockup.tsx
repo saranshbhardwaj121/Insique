@@ -11,7 +11,7 @@ export function ShowcaseMockup() {
         </div>
         <div className="ml-3 flex items-center gap-1.5 text-xs text-muted-foreground">
           <Signal className="h-3 w-3" />
-          <span>Insique — Dashboard</span>
+          <span>Insique Dashboard</span>
         </div>
       </div>
 

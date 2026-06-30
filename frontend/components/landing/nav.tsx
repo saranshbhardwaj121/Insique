@@ -62,7 +62,7 @@ export function Nav() {
             <Link href="/login">Sign in</Link>
           </Button>
           <Button size="sm" asChild className="hidden md:inline-flex">
-            <Link href="/register">Try Insique Free</Link>
+            <Link href="/register">Get Started</Link>
           </Button>
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild className="md:hidden">
@@ -91,7 +91,7 @@ export function Nav() {
                   Sign in
                 </Link>
                 <Button size="sm" asChild className="mt-2">
-                  <Link href="/register" onClick={handleNavClick}>Try Insique Free</Link>
+                  <Link href="/register" onClick={handleNavClick}>Get Started</Link>
                 </Button>
               </div>
             </SheetContent>

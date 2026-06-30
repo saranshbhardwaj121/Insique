@@ -35,7 +35,7 @@ export function EvidenceSection() {
 
         <div className="grid gap-6 sm:grid-cols-2">
           {points.map((point) => (
-            <div key={point.title} className="flex gap-4 rounded-xl border border-border/50 bg-card p-5">
+            <div key={point.title} className="flex gap-4 rounded-xl border border-border/50 bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-border/80 hover:shadow-sm">
               <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary">
                 <point.icon className="h-4 w-4 text-primary" />
               </div>
@@ -49,11 +49,7 @@ export function EvidenceSection() {
           ))}
         </div>
 
-        <div className="mx-auto mt-12 max-w-2xl text-center">
-          <p className="text-lg leading-relaxed text-muted-foreground">
-            Insique doesn&apos;t predict the future. It structures the present so you can decide.
-          </p>
-        </div>
+
       </div>
     </section>
   );

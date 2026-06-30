@@ -9,7 +9,7 @@ const capabilities = [
   {
     icon: TrendingUp,
     title: "Market Data",
-    description: "Live quotes and historical data. Price, volume, day range — full market context.",
+    description: "Live quotes and historical data. Price, volume, and day range give you full market context.",
   },
   {
     icon: BarChart3,
@@ -50,7 +50,7 @@ export function CapabilitiesGrid() {
           {capabilities.map((cap) => (
             <div
               key={cap.title}
-              className="group rounded-xl border border-border/50 bg-card p-5 transition-all duration-200 hover:border-border/80"
+              className="group rounded-xl border border-border/50 bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-border/80 hover:shadow-sm"
             >
               <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-secondary transition-all duration-300 group-hover:scale-110">
                 <cap.icon className="h-4 w-4 text-primary" />

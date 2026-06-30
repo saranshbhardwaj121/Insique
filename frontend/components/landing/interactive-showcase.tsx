@@ -22,21 +22,21 @@ const tabs: Tab[] = [
     label: "Signals",
     component: <SignalsMockup />,
     description:
-      "Every signal is the weighted vote of four technical indicators. No black boxes, no guesswork — just clear BUY, SELL, or NEUTRAL with a confidence score.",
+      "Every signal is the weighted vote of four technical indicators. Clear BUY, SELL, or NEUTRAL with a confidence score.",
   },
   {
     id: "analytics",
     label: "Analytics",
     component: <AnalyticsMockup />,
     description:
-      "Visualize momentum, trends, and crossovers. RSI, MACD, SMA, and EMA — all with clean, interactive charts that make patterns immediately visible.",
+      "Visualize momentum, trends, and crossovers. RSI, MACD, SMA, and EMA with clean, interactive charts that make patterns visible.",
   },
   {
     id: "market-data",
     label: "Market Data",
     component: <MarketDataMockup />,
     description:
-      "Live and historical data for every supported ticker. Price, volume, day range — the full context you need before a decision.",
+      "Live and historical data for every supported ticker. Price, volume, and day range give you full context before a decision.",
   },
   {
     id: "watchlists",
