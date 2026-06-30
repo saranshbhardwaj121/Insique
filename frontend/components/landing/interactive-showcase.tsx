@@ -78,7 +78,7 @@ export function InteractiveShowcase() {
         const nextIndex = (currentIndex + 1) % tabs.length;
         return tabs[nextIndex].id;
       });
-    }, 3500);
+    }, 5000);
     return () => clearInterval(interval);
   }, [isRotating, isPaused]);
 
@@ -103,7 +103,7 @@ export function InteractiveShowcase() {
 
   const handleTabClick = (id: string) => {
     setActiveTab(id);
-    resetRotation(8000);
+    resetRotation(12000);
   };
 
   return (
@@ -139,17 +139,17 @@ export function InteractiveShowcase() {
             ))}
           </div>
 
-          <div className="relative mb-6 overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl transition-all duration-200">
-            <div className="relative p-4 sm:p-6">
+          <div className="relative mb-6 overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl transition-all duration-500">
+            <div className="p-4 sm:p-6">
               {tabs.map((tab) => (
                 <div
                   key={tab.id}
                   className={cn(
+                    "transition-all duration-500",
                     activeTab === tab.id
-                      ? "relative opacity-100 scale-100"
-                      : "absolute inset-0 opacity-0 scale-95 pointer-events-none"
+                      ? "block animate-fade-in"
+                      : "hidden"
                   )}
-                  style={{ transition: "opacity 200ms ease-out, transform 200ms ease-out" }}
                 >
                   {tab.component}
                 </div>
@@ -166,8 +166,8 @@ export function InteractiveShowcase() {
                 <p
                   key={tab.id}
                   className={cn(
-                    "mt-2 text-sm leading-relaxed text-muted-foreground transition-opacity duration-200",
-                    activeTab === tab.id ? "opacity-100" : "opacity-0 absolute pointer-events-none"
+                    "mt-2 text-sm leading-relaxed text-muted-foreground transition-opacity duration-500",
+                    activeTab === tab.id ? "opacity-100" : "hidden opacity-0"
                   )}
                 >
                   {tab.description}
@@ -180,7 +180,7 @@ export function InteractiveShowcase() {
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id)}
                   className={cn(
-                    "h-2 w-2 rounded-full transition-all duration-200",
+                    "h-2 w-2 rounded-full transition-all duration-300",
                     activeTab === tab.id
                       ? "bg-primary"
                       : "bg-border hover:bg-muted-foreground/40"
