@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from backend.app.models.user import User
@@ -16,11 +16,11 @@ class UserRepository(BaseRepository[User]):
         return self.session.get(User, user_id)
 
     def get_by_username(self, username: str) -> User | None:
-        statement = select(User).where(User.username == username)
+        statement = select(User).where(func.lower(User.username) == func.lower(username))
         return self.session.scalar(statement)
 
     def get_by_email(self, email: str) -> User | None:
-        statement = select(User).where(User.email == email)
+        statement = select(User).where(func.lower(User.email) == func.lower(email))
         return self.session.scalar(statement)
 
     def delete_by_id(self, user_id: UUID) -> bool:
