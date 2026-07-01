@@ -250,6 +250,8 @@ class WatchlistService:
         ticker = self._normalize_ticker(ticker)
         if not ticker:
             raise ValueError("Ticker cannot be empty")
+        if len(ticker) > 20:
+            raise ValueError("Ticker exceeds maximum length of 20 characters")
         watchlist = self.repo.get_owned_by_id(user.id, watchlist_id)
         if watchlist is None:
             raise ValueError("Watchlist not found")

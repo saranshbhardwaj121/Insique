@@ -15,11 +15,10 @@ def send_password_reset_email(to_email: str, reset_url: str) -> bool:
     from_email = settings.from_email
 
     if not api_key or not from_email:
-        logger.warning(
-            "RESEND_API_KEY or FROM_EMAIL not configured. "
-            "Would send reset email to %s with URL: %s",
+        logger.info(
+            "Password reset email not sent: RESEND_API_KEY or FROM_EMAIL not configured. "
+            "Would send to %s",
             to_email,
-            reset_url,
         )
         return False
 

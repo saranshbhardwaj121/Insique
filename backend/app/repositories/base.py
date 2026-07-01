@@ -16,4 +16,4 @@ class BaseRepository(Generic[ModelT]):
         return instance
 
     def list_all(self) -> Sequence[ModelT]:
-        return self.session.query(self.model).all()
+        raise NotImplementedError("list_all is not safe for all models; use specific queries instead")

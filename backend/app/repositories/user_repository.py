@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
 from sqlalchemy import select
@@ -28,3 +29,18 @@ class UserRepository(BaseRepository[User]):
             return False
         self.session.delete(user)
         return True
+
+    def increment_failed_attempts(self, user_id: UUID, max_attempts: int = 10, lockout_minutes: int = 15) -> None:
+        user = self.session.get(User, user_id)
+        if user is None:
+            return
+        user.failed_login_attempts = (user.failed_login_attempts or 0) + 1
+        if user.failed_login_attempts >= max_attempts:
+            user.locked_until = datetime.now(timezone.utc) + timedelta(minutes=lockout_minutes)
+
+    def reset_failed_attempts(self, user_id: UUID) -> None:
+        user = self.session.get(User, user_id)
+        if user is None:
+            return
+        user.failed_login_attempts = 0
+        user.locked_until = None

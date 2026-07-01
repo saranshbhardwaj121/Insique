@@ -3,30 +3,27 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid4
 
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-
-logger = logging.getLogger(__name__)
+import bcrypt
+import jwt
 
 from backend.app.core.config import get_settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+logger = logging.getLogger(__name__)
 
 
 def hash_password(password: str) -> str:
-    logger.warning("hash_password called: type=%s, len=%d, repr=%r",
-                   type(password).__name__, len(password), password[:20])
     try:
-        result = pwd_context.hash(password)
-        logger.warning("hash_password succeeded: hash starts with %r", result[:10])
-        return result
+        return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     except Exception as exc:
-        logger.exception("hash_password FAILED: %s: %s", type(exc).__name__, exc)
+        logger.exception("hash_password failed")
         raise
 
 
 def verify_password(password: str, password_hash: str) -> bool:
-    return pwd_context.verify(password, password_hash)
+    try:
+        return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
+    except Exception:
+        return False
 
 
 def create_access_token(subject: str, expires_delta: timedelta | None = None) -> str:
@@ -67,7 +64,7 @@ def decode_token(token: str) -> dict[str, Any]:
     settings = get_settings()
     try:
         return jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algorithm])
-    except JWTError as exc:
+    except jwt.InvalidTokenError as exc:
         raise ValueError("Invalid token") from exc
 
 

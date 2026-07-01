@@ -23,8 +23,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 app.include_router(api_router, prefix=settings.api_v1_prefix)
@@ -32,4 +32,4 @@ app.include_router(api_router, prefix=settings.api_v1_prefix)
 
 @app.get("/")
 def root() -> dict[str, str]:
-    return {"name": settings.project_name, "environment": settings.environment}
+    return {"name": settings.project_name}

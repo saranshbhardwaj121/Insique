@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Float, String, Text, ForeignKey, func
+from sqlalchemy import Boolean, DateTime, Numeric, String, Text, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -24,8 +24,8 @@ class Notification(Base):
     body: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, index=True)
     read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    triggered_value: Mapped[float] = mapped_column(Float, nullable=False)
-    threshold: Mapped[float] = mapped_column(Float, nullable=False)
+    triggered_value: Mapped[float] = mapped_column(Numeric(12, 4), nullable=False)
+    threshold: Mapped[float] = mapped_column(Numeric(12, 4), nullable=False)
     triggered_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )

@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from backend.app.api.deps import get_current_user, get_session
-from backend.app.models.user import User
+from backend.app.api.deps import get_session
 from backend.app.schemas.analytics import IndicatorResponse, MacdResponse
 from backend.app.services.analytics_service import AnalyticsService
 from backend.app.services.market_data_service import (
@@ -20,10 +19,8 @@ def get_sma(
     period: str = Query(default="6mo"),
     interval: str = Query(default="1d"),
     refresh: bool = Query(default=False),
-    current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ) -> IndicatorResponse:
-    del current_user
     service = AnalyticsService(session)
     try:
         return service.get_sma(ticker, window, period, interval, refresh)
@@ -40,10 +37,8 @@ def get_ema(
     period: str = Query(default="6mo"),
     interval: str = Query(default="1d"),
     refresh: bool = Query(default=False),
-    current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ) -> IndicatorResponse:
-    del current_user
     service = AnalyticsService(session)
     try:
         return service.get_ema(ticker, window, period, interval, refresh)
@@ -60,10 +55,8 @@ def get_rsi(
     period: str = Query(default="6mo"),
     interval: str = Query(default="1d"),
     refresh: bool = Query(default=False),
-    current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ) -> IndicatorResponse:
-    del current_user
     service = AnalyticsService(session)
     try:
         return service.get_rsi(ticker, window, period, interval, refresh)
@@ -82,10 +75,8 @@ def get_macd(
     period: str = Query(default="6mo"),
     interval: str = Query(default="1d"),
     refresh: bool = Query(default=False),
-    current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ) -> MacdResponse:
-    del current_user
     service = AnalyticsService(session)
     try:
         return service.get_macd(ticker, fast, slow, signal, period, interval, refresh)

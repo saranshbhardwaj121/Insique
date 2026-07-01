@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from backend.app.api.deps import get_current_user, get_session
-from backend.app.models.user import User
+from backend.app.api.deps import get_session
 from backend.app.schemas.signals import SignalSummaryResponse
 from backend.app.services.market_data_service import (
     MarketDataProviderError,
@@ -29,10 +28,8 @@ def get_signal_summary(
     sma_long: int = Query(default=50, ge=2, le=250),
     ema_short: int = Query(default=12, ge=2, le=250),
     ema_long: int = Query(default=26, ge=2, le=250),
-    current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ) -> SignalSummaryResponse:
-    del current_user
 
     if rsi_oversold >= rsi_overbought:
         raise HTTPException(

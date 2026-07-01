@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, Float, String, ForeignKey, func
+from sqlalchemy import DateTime, Numeric, String, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -18,7 +18,7 @@ class Alert(TimestampMixin, Base):
     ticker: Mapped[str] = mapped_column(String(20), nullable=False)
     alert_type: Mapped[str] = mapped_column(String(20), nullable=False)
     operator: Mapped[str] = mapped_column(String(5), nullable=False)
-    threshold: Mapped[float] = mapped_column(Float, nullable=False)
+    threshold: Mapped[float] = mapped_column(Numeric(12, 4), nullable=False)
     parameters: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
 
@@ -42,8 +42,8 @@ class TriggeredAlert(Base):
     ticker: Mapped[str] = mapped_column(String(20), nullable=False)
     alert_type: Mapped[str] = mapped_column(String(20), nullable=False)
     operator: Mapped[str] = mapped_column(String(5), nullable=False)
-    threshold: Mapped[float] = mapped_column(Float, nullable=False)
-    triggered_value: Mapped[float] = mapped_column(Float, nullable=False)
+    threshold: Mapped[float] = mapped_column(Numeric(12, 4), nullable=False)
+    triggered_value: Mapped[float] = mapped_column(Numeric(12, 4), nullable=False)
     triggered_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )

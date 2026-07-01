@@ -1,5 +1,7 @@
 import logging
-from datetime import datetime, timezone
+import secrets
+import time
+from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -24,14 +26,18 @@ from backend.app.services.email_service import send_password_reset_email
 
 
 class AuthService:
+    MAX_FAILED_ATTEMPTS = 10
+    LOCKOUT_DURATION_MINUTES = 15
+
     def __init__(self, session: Session) -> None:
         self.session = session
         self.users = UserRepository(session)
         self.refresh_tokens = RefreshTokenRepository(session)
 
     def register_user(self, username: str, email: str, password: str) -> User:
-        logger.warning("register_user: username=%r, email=%r, password type=%s, password len=%d, password repr=%r",
-                       username, email, type(password).__name__, len(password), password[:20])
+        email = email.lower().strip()
+        username = username.strip()
+
         existing_username = self.users.get_by_username(username)
         if existing_username is not None:
             raise ValueError("Username already exists")
@@ -42,18 +48,29 @@ class AuthService:
 
         user = User(username=username, email=email, password_hash=hash_password(password))
         self.session.add(user)
-        self.session.commit()
-        self.session.refresh(user)
+        try:
+            self.session.commit()
+            self.session.refresh(user)
+        except Exception:
+            self.session.rollback()
+            raise
         return user
 
     def authenticate_user(self, identifier: str, password: str) -> User | None:
+        identifier = identifier.lower().strip()
         user = self.users.get_by_username(identifier) or self.users.get_by_email(identifier)
         if user is None:
             return None
 
-        if not verify_password(password, user.password_hash):
+        if user.locked_until and user.locked_until > datetime.now(timezone.utc):
             return None
 
+        if not verify_password(password, user.password_hash):
+            self.users.increment_failed_attempts(user.id)
+            self.session.commit()
+            return None
+
+        self.users.reset_failed_attempts(user.id)
         user.last_login_at = datetime.now(timezone.utc)
         self.session.commit()
         return user
@@ -117,15 +134,20 @@ class AuthService:
         revoked = self.refresh_tokens.revoke_all_by_user_id(user_id)
         if revoked:
             logger.info("Revoked %d refresh tokens for user %s", revoked, user_id)
-        self.session.commit()
+        try:
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+            raise
 
     def send_password_reset_email(self, email: str) -> bool:
         user = self.users.get_by_email(email)
         if user is None or not user.is_active:
-            return False
+            time.sleep(secrets.randbelow(300) / 1000 + 0.2)
+            return True
         token = self.create_password_reset_token(user.id)
         settings = get_settings()
-        reset_url = f"{settings.frontend_url}/reset-password?token={token}"
+        reset_url = f"{settings.frontend_url}/reset-password/{token}"
         return send_password_reset_email(to_email=email, reset_url=reset_url)
 
     def delete_account(self, user_id: UUID, password: str) -> None:
@@ -137,8 +159,12 @@ class AuthService:
         revoked = self.refresh_tokens.revoke_all_by_user_id(user_id)
         if revoked:
             logger.info("Revoked %d refresh tokens for user %s", revoked, user_id)
-        self.users.delete_by_id(user_id)
-        self.session.commit()
+        try:
+            self.users.delete_by_id(user_id)
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+            raise
 
     def revoke_refresh_token(self, refresh_token: str) -> bool:
         payload = decode_token(refresh_token)
