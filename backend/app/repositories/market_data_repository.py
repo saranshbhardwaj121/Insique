@@ -29,6 +29,13 @@ class MarketDataRepository:
         statement = select(func.max(MarketData.updated_at)).where(MarketData.ticker == ticker)
         return self.session.scalar(statement)
 
+    def delete_by_ticker(self, ticker: str) -> int:
+        statement = select(MarketData).where(MarketData.ticker == ticker)
+        rows = list(self.session.scalars(statement).all())
+        for row in rows:
+            self.session.delete(row)
+        return len(rows)
+
     def upsert_rows(self, rows: list[MarketData]) -> int:
         count = 0
         for row in rows:

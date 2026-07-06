@@ -1,3 +1,4 @@
+import logging
 import math
 import re
 from collections.abc import Iterable
@@ -13,6 +14,8 @@ from backend.app.models.market_data import MarketData
 from backend.app.repositories.market_data_repository import MarketDataRepository
 from backend.app.schemas.market_data import HistoricalBarRead, HistoricalDataResponse, QuoteRead
 from backend.app.services.cache import quote_cache
+
+logger = logging.getLogger(__name__)
 
 
 class MarketDataValidationError(ValueError):
@@ -98,7 +101,24 @@ class MarketDataService:
 
         fetched_at = datetime.now(timezone.utc)
         cached_rows = self.repository.list_by_ticker(normalized)
-        if cached_rows and not refresh and self._cache_is_fresh(normalized):
+
+        # Self-healing: validate cached rows for NaN/Inf
+        cache_invalidated = False
+        if cached_rows:
+            invalid_rows = [r for r in cached_rows if not self._is_valid_ohlcv(r)]
+            if invalid_rows:
+                dates = [str(r.date) for r in invalid_rows[:5]]
+                logger.warning("Cache corrupted for %s: %d invalid rows (dates: %s). Deleting and forcing refresh.",
+                               normalized, len(invalid_rows), ", ".join(dates))
+                deleted = self.repository.delete_by_ticker(normalized)
+                self.session.commit()
+                cache_invalidated = True
+                cached_rows = []
+                logger.info("Deleted %d corrupted rows for %s, forcing fresh fetch", deleted, normalized)
+
+        # Return fresh cache if valid and recent
+        if cached_rows and not refresh and not cache_invalidated and self._cache_is_fresh(normalized):
+            logger.info("Cache hit for %s (%d rows, period=%s)", normalized, len(cached_rows), period)
             return HistoricalDataResponse(
                 ticker=normalized,
                 period=period,
@@ -109,18 +129,21 @@ class MarketDataService:
                 fetched_at=fetched_at,
             )
 
+        logger.info("Cache miss for %s (refresh=%s, cache_invalidated=%s). Fetching from yfinance.",
+                    normalized, refresh, cache_invalidated)
         frame = self._fetch_history_from_yfinance(normalized, period, interval)
         saved_count = self.save_history(normalized, frame)
         if saved_count == 0:
             raise MarketDataProviderError("Provider returned no historical data")
 
         rows = self.repository.list_by_ticker(normalized)
+        provider = "database" if cache_invalidated else "yfinance"
         return HistoricalDataResponse(
             ticker=normalized,
             period=period,
             interval=interval,
             rows=self._to_history_rows(rows),
-            provider="yfinance",
+            provider=provider,
             cached=False,
             fetched_at=fetched_at,
         )
@@ -128,23 +151,41 @@ class MarketDataService:
     def save_history(self, ticker: str, frame: pd.DataFrame) -> int:
         ticker = self.normalize_ticker(ticker)
         rows: list[MarketData] = []
+        skipped = 0
         for index, row in frame.iterrows():
             row_date = index.date() if hasattr(index, "date") else index
-            rows.append(
-                MarketData(
-                    ticker=ticker,
-                    date=row_date if isinstance(row_date, date) else row_date.to_pydatetime().date(),
-                    open=float(row["Open"]),
-                    high=float(row["High"]),
-                    low=float(row["Low"]),
-                    close=float(row["Close"]),
-                    volume=int(row["Volume"]),
-                )
+            parsed_date = row_date if isinstance(row_date, date) else row_date.to_pydatetime().date()
+
+            row_data = MarketData(
+                ticker=ticker,
+                date=parsed_date,
+                open=float(row["Open"]),
+                high=float(row["High"]),
+                low=float(row["Low"]),
+                close=float(row["Close"]),
+                volume=int(row["Volume"]),
             )
+
+            if not self._is_valid_ohlcv(row_data):
+                logger.warning("Skipping row with invalid OHLCV: %s %s (open=%s, high=%s, low=%s, close=%s, volume=%s)",
+                               ticker, parsed_date, row_data.open, row_data.high,
+                               row_data.low, row_data.close, row_data.volume)
+                skipped += 1
+                continue
+
+            rows.append(row_data)
+
+        if skipped and not rows:
+            logger.error("All %d rows from yfinance for %s contain invalid OHLCV — provider returned incomplete data",
+                         skipped, ticker)
+            raise MarketDataProviderError("Provider returned incomplete historical data (all rows contain invalid OHLCV)")
 
         if rows:
             self.repository.upsert_rows(rows)
             self.session.commit()
+
+        if skipped:
+            logger.info("Saved %d rows for %s, skipped %d rows with invalid OHLCV", len(rows), ticker, skipped)
 
         return len(rows)
 
@@ -171,6 +212,14 @@ class MarketDataService:
             latest_updated_at = latest_updated_at.replace(tzinfo=timezone.utc)
         cutoff = datetime.now(timezone.utc) - timedelta(days=self.settings.market_data_cache_days)
         return latest_updated_at >= cutoff
+
+    def _is_valid_ohlcv(self, row: MarketData) -> bool:
+        for val in (row.open, row.high, row.low, row.close):
+            if val is None or math.isnan(val) or math.isinf(val):
+                return False
+        if row.volume is None or math.isnan(float(row.volume)) or math.isinf(float(row.volume)):
+            return False
+        return True
 
     def _to_history_rows(self, rows: Iterable[MarketData]) -> list[HistoricalBarRead]:
         return [

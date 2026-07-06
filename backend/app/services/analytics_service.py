@@ -1,3 +1,6 @@
+import logging
+import math
+
 import pandas as pd
 from sqlalchemy.orm import Session
 
@@ -8,6 +11,55 @@ from backend.app.services.market_data_service import (
     MarketDataService,
     MarketDataValidationError,
 )
+
+logger = logging.getLogger(__name__)
+
+REQUIRED_COLUMNS = {"Open", "High", "Low", "Close", "Volume"}
+
+
+def _validate_close_series(series: pd.Series, label: str) -> None:
+    nan_count = series.isna().sum()
+    if nan_count > 0:
+        raise MarketDataProviderError(
+            f"Cannot compute {label}: close column contains {nan_count} NaN values"
+        )
+
+
+def _validate_ohlc_dataframe(df: pd.DataFrame, label: str) -> None:
+    if df.empty:
+        raise MarketDataProviderError(f"Cannot compute {label}: OHLC dataframe is empty")
+    missing = REQUIRED_COLUMNS - set(df.columns)
+    if missing:
+        raise MarketDataProviderError(f"Cannot compute {label}: missing required columns: {missing}")
+
+    for col in REQUIRED_COLUMNS:
+        if col == "Volume":
+            continue
+        nan_count = df[col].isna().sum()
+        inf_count = math.isinf(df[col]).sum() if hasattr(df[col], "dtype") and df[col].dtype.kind in "fc" else 0
+        if nan_count > 0 or inf_count > 0:
+            raise MarketDataProviderError(
+                f"Cannot compute {label}: column '{col}' contains {nan_count} NaN and {inf_count} Inf values"
+            )
+
+    vol_invalid = df["Volume"].isna().sum() | (df["Volume"] < 0).sum()
+    if vol_invalid > 0:
+        raise MarketDataProviderError(f"Cannot compute {label}: Volume column contains {vol_invalid} invalid entries")
+
+
+def _check_min_history(rows: list[HistoricalBarRead], indicator: str, window: int) -> None:
+    n = len(rows)
+    min_map = {
+        "rsi": max(window + 6, 20),
+        "sma": window,
+        "ema": window,
+        "macd": window + 6,
+    }
+    minimum = min_map.get(indicator, window)
+    if n < minimum:
+        raise MarketDataProviderError(
+            f"Insufficient history for {indicator}: need at least {minimum} candles, got {n}"
+        )
 
 
 class AnalyticsService:
@@ -24,10 +76,15 @@ class AnalyticsService:
         indicator: str,
         window: int,
     ) -> tuple[list[IndicatorPoint], IndicatorPoint | None]:
+        if not rows:
+            raise MarketDataProviderError(f"Cannot compute {indicator}: no historical data available")
+        _check_min_history(rows, indicator, window)
+
         df = pd.DataFrame(
             [{"date": r.date, "close": float(r.close)} for r in rows],
         )
         df = df.sort_values("date").reset_index(drop=True)
+        _validate_close_series(df["close"], f"{indicator} ({window})")
 
         if indicator == "sma":
             series = df["close"].rolling(window=window, min_periods=window).mean()
@@ -58,10 +115,15 @@ class AnalyticsService:
         rows: list[HistoricalBarRead],
         window: int,
     ) -> tuple[list[IndicatorPoint], IndicatorPoint | None]:
+        if not rows:
+            raise MarketDataProviderError("Cannot compute rsi: no historical data available")
+        _check_min_history(rows, "rsi", window)
+
         df = pd.DataFrame(
             [{"date": r.date, "close": float(r.close)} for r in rows],
         )
         df = df.sort_values("date").reset_index(drop=True)
+        _validate_close_series(df["close"], "rsi")
         close = df["close"]
         n = len(close)
 
@@ -123,10 +185,15 @@ class AnalyticsService:
         slow: int,
         signal: int,
     ) -> tuple[list[MacdPoint], MacdPoint | None]:
+        if not rows:
+            raise MarketDataProviderError("Cannot compute macd: no historical data available")
+        _check_min_history(rows, "macd", max(slow, signal))
+
         df = pd.DataFrame(
             [{"date": r.date, "close": float(r.close)} for r in rows],
         )
         df = df.sort_values("date").reset_index(drop=True)
+        _validate_close_series(df["close"], "macd")
         close = df["close"]
 
         ema_fast = close.ewm(span=fast, adjust=False, min_periods=fast).mean()

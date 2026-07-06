@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
@@ -11,6 +12,8 @@ from backend.app.services.market_data_service import (
     MarketDataService,
     MarketDataValidationError,
 )
+
+logger = logging.getLogger(__name__)
 
 MAX_ABS_SCORE = 6
 
@@ -346,7 +349,10 @@ class SignalService:
             raise MarketDataProviderError("No historical data available for calculation")
 
         rows = history.rows
+        n_candles = len(rows)
         latest_close = rows[-1].close if rows else None
+        logger.info("Generating signals for %s: %d candles, provider=%s, cached=%s, period=%s",
+                    ticker, n_candles, history.provider, history.cached, period)
 
         sma_rows, sma_short_latest = self.analytics_service._compute_indicator_rows(
             rows, "sma", sma_short,
@@ -377,6 +383,9 @@ class SignalService:
 
         rating, total_score = _aggregate_rating(signals)
         confidence = _compute_confidence(total_score)
+
+        logger.info("Signals generated for %s: rating=%s, score=%d/%d, confidence=%.1f%%, provider=%s, cached=%s",
+                    ticker, rating, total_score, MAX_ABS_SCORE, confidence * 100, history.provider, history.cached)
 
         return SignalSummaryResponse(
             ticker=history.ticker,
