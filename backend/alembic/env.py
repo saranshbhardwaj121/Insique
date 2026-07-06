@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 from backend.app.core.config import get_settings
 from backend.app.models.base import Base
-from backend.app.models import alert, market_data, notification, refresh_token, trade, user, watchlist, watchlist_item  # noqa: F401
+from backend.app.models import alert, market_data, notification, oauth_session, refresh_token, trade, user, watchlist, watchlist_item  # noqa: F401
 
 config = context.config
 

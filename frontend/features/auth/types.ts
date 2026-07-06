@@ -5,6 +5,9 @@ export interface User {
   is_active: boolean;
   created_at: string;
   last_login_at: string | null;
+  auth_provider: string;
+  avatar_url: string | null;
+  email_verified: boolean;
 }
 
 export interface AuthTokens {
@@ -39,4 +42,8 @@ export interface PasswordResetResponse {
 
 export interface DeleteAccountRequest {
   password: string;
+}
+
+export interface GoogleCallbackRequest {
+  code: string;
 }

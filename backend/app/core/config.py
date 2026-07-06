@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     password_reset_expire_minutes: int = 15
     forgot_password_rate_limit_attempts: int = 5
     forgot_password_rate_limit_window_minutes: int = 15
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    google_redirect_uri: str = ""
 
     @field_validator("database_url")
     @classmethod

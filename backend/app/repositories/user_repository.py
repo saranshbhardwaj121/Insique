@@ -23,6 +23,10 @@ class UserRepository(BaseRepository[User]):
         statement = select(User).where(func.lower(User.email) == func.lower(email))
         return self.session.scalar(statement)
 
+    def get_by_google_id(self, google_id: str) -> User | None:
+        statement = select(User).where(User.google_id == google_id)
+        return self.session.scalar(statement)
+
     def delete_by_id(self, user_id: UUID) -> bool:
         user = self.session.get(User, user_id)
         if user is None:

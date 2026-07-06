@@ -13,3 +13,6 @@ class UserRead(BaseModel):
     is_active: bool
     created_at: datetime
     last_login_at: datetime | None = None
+    auth_provider: str = "LOCAL"
+    avatar_url: str | None = None
+    email_verified: bool = False

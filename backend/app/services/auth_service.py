@@ -131,6 +131,8 @@ class AuthService:
         if user is None or not user.is_active:
             raise ValueError("User not found")
         user.password_hash = hash_password(new_password)
+        if user.auth_provider == "GOOGLE":
+            user.auth_provider = "BOTH"
         revoked = self.refresh_tokens.revoke_all_by_user_id(user_id)
         if revoked:
             logger.info("Revoked %d refresh tokens for user %s", revoked, user_id)
@@ -154,7 +156,9 @@ class AuthService:
         user = self.users.get_by_id(user_id)
         if user is None or not user.is_active:
             raise ValueError("User not found")
-        if not verify_password(password, user.password_hash):
+        if user.auth_provider == "GOOGLE":
+            pass
+        elif not verify_password(password, user.password_hash):
             raise ValueError("Invalid password")
         revoked = self.refresh_tokens.revoke_all_by_user_id(user_id)
         if revoked:

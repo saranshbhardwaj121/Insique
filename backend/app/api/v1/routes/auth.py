@@ -1,7 +1,9 @@
 import logging
+from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
+from starlette.responses import RedirectResponse
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +23,16 @@ from backend.app.schemas.auth import (
 )
 from backend.app.schemas.user import UserRead
 from backend.app.services.auth_service import AuthService
+from backend.app.services.google_auth_service import (
+    GoogleAuthError,
+    GoogleAuthService,
+    create_google_authorization_url,
+    generate_oauth_state,
+    encode_oauth_state_cookie,
+    decode_oauth_state_cookie,
+    STATE_COOKIE_NAME,
+    STATE_COOKIE_MAX_AGE,
+)
 from backend.app.services.rate_limit_service import LoginRateLimiter
 
 router = APIRouter()
@@ -41,6 +53,134 @@ reset_password_rate_limiter = LoginRateLimiter(
     max_attempts=5,
     window_seconds=900,
 )
+google_callback_rate_limiter = LoginRateLimiter(
+    max_attempts=20,
+    window_seconds=60,
+)
+
+
+@router.get("/google/login", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+def google_login() -> RedirectResponse:
+    """Redirect the user to Google's OAuth consent screen with CSRF state."""
+    try:
+        state = generate_oauth_state()
+        signed = encode_oauth_state_cookie(state, settings)
+        url = create_google_authorization_url(state=state)
+        redirect = RedirectResponse(url=url)
+        redirect.set_cookie(
+            key=STATE_COOKIE_NAME,
+            value=signed,
+            max_age=STATE_COOKIE_MAX_AGE,
+            httponly=True,
+            secure=settings.environment == "production",
+            samesite="lax",
+            path="/api/v1/auth/google",
+        )
+        return redirect
+    except GoogleAuthError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(exc),
+        )
+
+
+@router.get("/google/callback")
+def google_callback(
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+    request: Request = None,
+    session: Session = Depends(get_session),
+):
+    """Handle the Google OAuth callback.
+
+    Validates state for CSRF protection, exchanges the authorization code,
+    creates a one-time session code, and redirects to the frontend.
+    """
+    if error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Google OAuth error: {error}",
+        )
+    if not code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing authorization code",
+        )
+
+    # Validate state for CSRF protection
+    state_cookie = request.cookies.get(STATE_COOKIE_NAME) if request else None
+    if state_cookie:
+        expected_state = decode_oauth_state_cookie(state_cookie, settings)
+        if expected_state is None or expected_state != state:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid OAuth state. Possible CSRF attack.",
+            )
+
+    google_svc = GoogleAuthService(session)
+    auth_svc = AuthService(session)
+
+    try:
+        user = google_svc.handle_google_callback(code)
+    except GoogleAuthError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+
+    session_code = google_svc.create_session_code(user)
+    access_token = auth_svc.issue_access_token(user)
+    refresh_token = auth_svc.issue_refresh_token(user)
+
+    frontend_url = settings.frontend_url.rstrip("/")
+    params = urlencode({"code": session_code})
+    redirect = RedirectResponse(url=f"{frontend_url}/auth/google/callback?{params}")
+    redirect.delete_cookie(
+        key=STATE_COOKIE_NAME,
+        path="/api/v1/auth/google",
+    )
+    return redirect
+
+
+@router.post("/google/exchange", response_model=AuthTokensResponse)
+def google_exchange(
+    payload: dict,
+    request: Request,
+    session: Session = Depends(get_session),
+) -> AuthTokensResponse:
+    """Exchange a one-time session code for full auth tokens."""
+    rate_limit_key = f"google_exchange:{request.client.host}" if request.client else "global"
+    if not google_callback_rate_limiter.is_allowed(rate_limit_key):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many requests. Try again later.",
+        )
+
+    code = payload.get("code")
+    if not code or not isinstance(code, str):
+        google_callback_rate_limiter.register_failure(rate_limit_key)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing session code",
+        )
+
+    google_svc = GoogleAuthService(session)
+    auth_svc = AuthService(session)
+
+    try:
+        user = google_svc.exchange_session_code(code)
+    except GoogleAuthError as exc:
+        google_callback_rate_limiter.register_failure(rate_limit_key)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        )
+
+    access_token = auth_svc.issue_access_token(user)
+    refresh_token = auth_svc.issue_refresh_token(user)
+    google_callback_rate_limiter.reset(rate_limit_key)
+    return AuthTokensResponse(access_token=access_token, refresh_token=refresh_token)
 
 
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)

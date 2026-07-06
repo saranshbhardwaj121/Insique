@@ -18,6 +18,10 @@ class User(TimestampMixin, Base):
     last_login_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     failed_login_attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     locked_until: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    google_id: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True, index=True)
+    auth_provider: Mapped[str] = mapped_column(String(20), default="LOCAL", nullable=False)
+    avatar_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     watchlists = relationship("Watchlist", back_populates="user", cascade="all, delete-orphan")
     trades = relationship("Trade", back_populates="user", cascade="all, delete-orphan")
