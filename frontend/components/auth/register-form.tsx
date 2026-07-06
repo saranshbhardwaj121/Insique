@@ -132,7 +132,8 @@ export function RegisterForm() {
         variant="outline"
         className="w-full"
         onClick={() => {
-          window.location.href = "/api/v1/auth/google/login";
+          const baseUrl = process.env.NEXT_PUBLIC_FASTAPI_BASE_URL || "http://localhost:8000/api/v1";
+          window.location.href = `${baseUrl}/auth/google/login`;
         }}
       >
         <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

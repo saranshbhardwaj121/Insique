@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ detail: "Missing session code" }, { status: 400 });
     }
 
-    const tokens = await serverFetch<AuthTokens>(API_ROUTES.AUTH.GOOGLE_CALLBACK, {
+    const tokens = await serverFetch<AuthTokens>(API_ROUTES.AUTH.GOOGLE_EXCHANGE, {
       method: "POST",
       body: JSON.stringify({ code }),
     });

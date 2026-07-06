@@ -9,6 +9,7 @@ export const API_ROUTES = {
     RESET_PASSWORD: "/auth/reset-password",
     DELETE_ACCOUNT: "/auth/delete-account",
     GOOGLE_CALLBACK: "/auth/google/callback",
+    GOOGLE_EXCHANGE: "/auth/google/exchange",
   },
   WATCHLISTS: {
     LIST: "/watchlists",
