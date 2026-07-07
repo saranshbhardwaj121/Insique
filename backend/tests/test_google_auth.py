@@ -375,11 +375,32 @@ class TestUsernameCollisions:
 # Tests: Verification function directly (NOT mocked)
 # ---------------------------------------------------------------------------
 
+
+def _build_test_jwk(public_key: object, kid: str = "test_kid") -> "PyJWK":
+    """Build a PyJWK from an RSA public key for test mocking."""
+    import base64
+    from jwt import PyJWK
+
+    pub_nums = public_key.public_numbers()
+
+    def _int_to_base64url(num: int) -> str:
+        num_bytes = num.to_bytes((num.bit_length() + 7) // 8, byteorder="big")
+        return base64.urlsafe_b64encode(num_bytes).rstrip(b"=").decode()
+
+    jwk_dict = {
+        "kty": "RSA",
+        "n": _int_to_base64url(pub_nums.n),
+        "e": _int_to_base64url(pub_nums.e),
+        "kid": kid,
+        "alg": "RS256",
+    }
+    return PyJWK(jwk_dict)
+
+
 class TestIdTokenVerification:
     def test_valid_token_succeeds(self) -> None:
         from backend.app.services.google_auth_service import _verify_google_id_token
         import jwt as pyjwt
-        from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
         from cryptography.hazmat.backends import default_backend
 
@@ -387,10 +408,6 @@ class TestIdTokenVerification:
             public_exponent=65537, key_size=2048, backend=default_backend()
         )
         public_key = private_key.public_key()
-        pub_pem = public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo,
-        ).decode("utf-8")
 
         payload = {
             "iss": "https://accounts.google.com",
@@ -402,10 +419,10 @@ class TestIdTokenVerification:
             "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp()),
         }
         token = pyjwt.encode(payload, private_key, algorithm="RS256", headers={"kid": "test_kid"})
-        certs = {"test_kid": pub_pem}
+        mock_jwk = _build_test_jwk(public_key)
 
-        with patch("httpx.get") as mock_get:
-            mock_get.return_value = MagicMock(status_code=200, json=lambda: certs)
+        with patch("backend.app.services.google_auth_service.jwt.PyJWKClient") as MockClient:
+            MockClient.return_value.get_signing_key_from_jwt.return_value = mock_jwk
             result = _verify_google_id_token(token, settings)
 
         assert result["sub"] == "test_sub"
@@ -414,7 +431,6 @@ class TestIdTokenVerification:
     def test_expired_token_rejected(self) -> None:
         from backend.app.services.google_auth_service import _verify_google_id_token
         import jwt as pyjwt
-        from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
         from cryptography.hazmat.backends import default_backend
 
@@ -422,10 +438,6 @@ class TestIdTokenVerification:
             public_exponent=65537, key_size=2048, backend=default_backend()
         )
         public_key = private_key.public_key()
-        pub_pem = public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo,
-        ).decode("utf-8")
 
         payload = {
             "iss": "https://accounts.google.com",
@@ -437,17 +449,16 @@ class TestIdTokenVerification:
             "exp": int((datetime.now(timezone.utc) - timedelta(hours=1)).timestamp()),
         }
         token = pyjwt.encode(payload, private_key, algorithm="RS256", headers={"kid": "test_kid"})
-        certs = {"test_kid": pub_pem}
+        mock_jwk = _build_test_jwk(public_key)
 
-        with patch("httpx.get") as mock_get:
-            mock_get.return_value = MagicMock(status_code=200, json=lambda: certs)
+        with patch("backend.app.services.google_auth_service.jwt.PyJWKClient") as MockClient:
+            MockClient.return_value.get_signing_key_from_jwt.return_value = mock_jwk
             with pytest.raises(RuntimeError, match="has expired"):
                 _verify_google_id_token(token, settings)
 
     def test_wrong_issuer_rejected(self) -> None:
         from backend.app.services.google_auth_service import _verify_google_id_token
         import jwt as pyjwt
-        from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
         from cryptography.hazmat.backends import default_backend
 
@@ -455,10 +466,6 @@ class TestIdTokenVerification:
             public_exponent=65537, key_size=2048, backend=default_backend()
         )
         public_key = private_key.public_key()
-        pub_pem = public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo,
-        ).decode("utf-8")
 
         payload = {
             "iss": "https://evil.com",
@@ -470,17 +477,16 @@ class TestIdTokenVerification:
             "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp()),
         }
         token = pyjwt.encode(payload, private_key, algorithm="RS256", headers={"kid": "test_kid"})
-        certs = {"test_kid": pub_pem}
+        mock_jwk = _build_test_jwk(public_key)
 
-        with patch("httpx.get") as mock_get:
-            mock_get.return_value = MagicMock(status_code=200, json=lambda: certs)
+        with patch("backend.app.services.google_auth_service.jwt.PyJWKClient") as MockClient:
+            MockClient.return_value.get_signing_key_from_jwt.return_value = mock_jwk
             with pytest.raises(RuntimeError, match="issuer"):
                 _verify_google_id_token(token, settings)
 
     def test_wrong_audience_rejected(self) -> None:
         from backend.app.services.google_auth_service import _verify_google_id_token
         import jwt as pyjwt
-        from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
         from cryptography.hazmat.backends import default_backend
 
@@ -488,10 +494,6 @@ class TestIdTokenVerification:
             public_exponent=65537, key_size=2048, backend=default_backend()
         )
         public_key = private_key.public_key()
-        pub_pem = public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo,
-        ).decode("utf-8")
 
         payload = {
             "iss": "https://accounts.google.com",
@@ -503,10 +505,10 @@ class TestIdTokenVerification:
             "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp()),
         }
         token = pyjwt.encode(payload, private_key, algorithm="RS256", headers={"kid": "test_kid"})
-        certs = {"test_kid": pub_pem}
+        mock_jwk = _build_test_jwk(public_key)
 
-        with patch("httpx.get") as mock_get:
-            mock_get.return_value = MagicMock(status_code=200, json=lambda: certs)
+        with patch("backend.app.services.google_auth_service.jwt.PyJWKClient") as MockClient:
+            MockClient.return_value.get_signing_key_from_jwt.return_value = mock_jwk
             with pytest.raises(RuntimeError, match="audience"):
                 _verify_google_id_token(token, settings)
 

@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 GOOGLE_ISSUERS = {"https://accounts.google.com", "accounts.google.com"}
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
-GOOGLE_CERTS_URL = "https://www.googleapis.com/oauth2/v1/certs"
+GOOGLE_CERTS_URL = "https://www.googleapis.com/oauth2/v3/certs"
 
 SESSION_CODE_EXPIRE_MINUTES = 5
 STATE_COOKIE_NAME = "oauth_state"
@@ -104,11 +104,6 @@ def _exchange_code_for_tokens(code: str, settings: Any) -> dict[str, Any]:
 
 
 def _verify_google_id_token(id_token: str, settings: Any) -> dict[str, Any]:
-    try:
-        header = jwt.get_unverified_header(id_token)
-    except jwt.DecodeError as exc:
-        raise GoogleAuthError("Invalid ID token format") from exc
-
     unverified = jwt.decode(id_token, options={"verify_signature": False})
 
     iss = unverified.get("iss")
@@ -120,21 +115,17 @@ def _verify_google_id_token(id_token: str, settings: Any) -> dict[str, Any]:
         raise GoogleAuthError(f"Invalid token audience: {aud}")
 
     try:
-        resp = httpx.get(GOOGLE_CERTS_URL, timeout=15)
-        resp.raise_for_status()
-        certs = resp.json()
-    except httpx.RequestError as exc:
+        jwks_client = jwt.PyJWKClient(GOOGLE_CERTS_URL, timeout=15)
+        signing_key = jwks_client.get_signing_key_from_jwt(id_token)
+    except jwt.PyJWKClientError as exc:
         raise GoogleAuthError("Failed to fetch Google public keys") from exc
-
-    kid = header.get("kid", "")
-    public_key = certs.get(kid)
-    if public_key is None:
-        raise GoogleAuthError("Matching public key not found")
+    except jwt.PyJWKError as exc:
+        raise GoogleAuthError("Invalid JWK response") from exc
 
     try:
         payload = jwt.decode(
             id_token,
-            public_key,
+            signing_key.key,
             algorithms=["RS256"],
             audience=settings.google_client_id,
             issuer=iss,
