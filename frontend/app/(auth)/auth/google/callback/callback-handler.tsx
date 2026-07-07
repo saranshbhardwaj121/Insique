@@ -1,19 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { API_ROUTES } from "@/lib/api/routes";
 import { clientFetch, ApiError } from "@/lib/api/client";
 
-export function GoogleCallbackHandler() {
+export function GoogleCallbackHandler({ code }: { code?: string }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const code = searchParams.get("code");
-
     if (!code) {
       setError("Missing authentication code.");
       return;
@@ -37,7 +34,7 @@ export function GoogleCallbackHandler() {
     }
 
     exchangeCode();
-  }, [searchParams, router]);
+  }, [code, router]);
 
   if (error) {
     return (
