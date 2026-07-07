@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from backend.app.api.deps import get_current_user, get_session
+from backend.app.api.deps import get_current_user, get_verified_user, get_session
 from backend.app.models.user import User
 from backend.app.schemas.notification import NotificationRead, UnreadCountResponse, NotificationPreferences
 from backend.app.services.notification_service import NotificationService
@@ -37,7 +37,7 @@ def unread_count(
 @router.patch("/{notification_id}/read", response_model=NotificationRead)
 def mark_notification_read(
     notification_id: UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> NotificationRead:
     service = NotificationService(session)
@@ -52,7 +52,7 @@ def mark_notification_read(
 
 @router.patch("/read-all", response_model=UnreadCountResponse)
 def mark_all_notifications_read(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> UnreadCountResponse:
     service = NotificationService(session)

@@ -21,8 +21,9 @@ from backend.app.schemas.auth import (
     RegisterRequest,
     ResetPasswordRequest,
 )
-from backend.app.schemas.user import UserRead
+from backend.app.schemas.user import UserRead, VerificationResponse, ResendVerificationResponse
 from backend.app.services.auth_service import AuthService
+from backend.app.services.verification_service import send_verification, verify_email, resend_verification, VerificationError
 from backend.app.services.google_auth_service import (
     GoogleAuthError,
     GoogleAuthService,
@@ -134,6 +135,7 @@ def google_callback(
     refresh_token = auth_svc.issue_refresh_token(user)
 
     frontend_url = settings.frontend_url.rstrip("/")
+    logger.info("Frontend redirect URL: %s", frontend_url)
     params = urlencode({"code": session_code})
     redirect = RedirectResponse(url=f"{frontend_url}/auth/google/callback?{params}")
     redirect.delete_cookie(
@@ -199,12 +201,45 @@ def register(payload: RegisterRequest, request: Request, session: Session = Depe
             email=payload.email,
             password=payload.password,
         )
+        send_verification(user, session)
         register_rate_limiter.reset(rate_limit_key)
         return UserRead.model_validate(user)
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Unable to create account. Please check your details and try again.",
+        )
+
+
+@router.get("/verify-email", response_model=VerificationResponse)
+def verify_email_endpoint(
+    token: str,
+    session: Session = Depends(get_session),
+) -> VerificationResponse:
+    try:
+        verify_email(token, session)
+        logger.info("Email verification succeeded for token")
+        return VerificationResponse(message="Email verified successfully")
+    except VerificationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
+
+
+@router.post("/resend-verification", response_model=ResendVerificationResponse)
+def resend_verification_endpoint(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+) -> ResendVerificationResponse:
+    try:
+        resend_verification(current_user, session)
+        logger.info("Verification email resent to user %s", current_user.email)
+        return ResendVerificationResponse(message="Verification email sent")
+    except VerificationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
         )
 
 

@@ -34,7 +34,7 @@ def get_current_user(
         if token_type != "access" or subject is None:
             raise credentials_exception
         user_id = UUID(subject)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         if isinstance(exc, HTTPException):
             raise
         raise credentials_exception from exc
@@ -43,3 +43,14 @@ def get_current_user(
     if user is None or not user.is_active:
         raise credentials_exception
     return user
+
+
+def get_verified_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    if not current_user.email_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please verify your email",
+        )
+    return current_user

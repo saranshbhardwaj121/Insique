@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.app.api.deps import get_current_user, get_session
+from backend.app.api.deps import get_current_user, get_verified_user, get_session
 from backend.app.models.user import User
 from backend.app.schemas.portfolio import (
     HoldingCreate,
@@ -29,7 +29,7 @@ def list_holdings(
 @router.post("/holdings", response_model=HoldingRead, status_code=status.HTTP_201_CREATED)
 def add_holding(
     payload: HoldingCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> HoldingRead:
     service = PortfolioService(session)
@@ -51,7 +51,7 @@ def add_holding(
 def update_holding(
     holding_id: UUID,
     payload: HoldingUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> HoldingRead:
     service = PortfolioService(session)
@@ -77,7 +77,7 @@ def update_holding(
 @router.delete("/holdings/{holding_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_holding(
     holding_id: UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> None:
     service = PortfolioService(session)

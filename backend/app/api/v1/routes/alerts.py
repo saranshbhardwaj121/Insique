@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from backend.app.api.deps import get_current_user, get_session
+from backend.app.api.deps import get_current_user, get_verified_user, get_session
 from backend.app.models.user import User
 from backend.app.schemas.alert import AlertCreate, AlertRead, AlertUpdate, TriggeredAlertRead
 from backend.app.services.alert_service import AlertService
@@ -31,7 +31,7 @@ def list_alerts(
 @router.post("", response_model=AlertRead, status_code=status.HTTP_201_CREATED)
 def create_alert(
     payload: AlertCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> AlertRead:
     service = AlertService(session)
@@ -70,7 +70,7 @@ def get_alert(
 def update_alert(
     alert_id: UUID,
     payload: AlertUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> AlertRead:
     service = AlertService(session)
@@ -94,7 +94,7 @@ def update_alert(
 @router.delete("/{alert_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_alert(
     alert_id: UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> None:
     service = AlertService(session)

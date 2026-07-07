@@ -16,3 +16,12 @@ class UserRead(BaseModel):
     auth_provider: str = "LOCAL"
     avatar_url: str | None = None
     email_verified: bool = False
+    verification_sent_at: datetime | None = None
+
+
+class VerificationResponse(BaseModel):
+    message: str
+
+
+class ResendVerificationResponse(BaseModel):
+    message: str

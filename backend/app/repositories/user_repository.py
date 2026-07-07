@@ -27,6 +27,10 @@ class UserRepository(BaseRepository[User]):
         statement = select(User).where(User.google_id == google_id)
         return self.session.scalar(statement)
 
+    def get_by_verification_token_hash(self, token_hash: str) -> User | None:
+        statement = select(User).where(User.verification_token_hash == token_hash)
+        return self.session.scalar(statement)
+
     def delete_by_id(self, user_id: UUID) -> bool:
         user = self.session.get(User, user_id)
         if user is None:

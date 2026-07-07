@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from backend.app.api.deps import get_current_user, get_session
+from backend.app.api.deps import get_current_user, get_verified_user, get_session
 from backend.app.models.user import User
 from backend.app.schemas.watchlist import (
     WatchlistCreate,
@@ -31,7 +31,7 @@ def list_watchlists(
 @router.post("", response_model=WatchlistRead, status_code=status.HTTP_201_CREATED)
 def create_watchlist(
     payload: WatchlistCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> WatchlistRead:
     service = WatchlistService(session)
@@ -150,7 +150,7 @@ def get_watchlist_signals(
 def rename_watchlist(
     watchlist_id: UUID,
     payload: WatchlistUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> WatchlistRead:
     service = WatchlistService(session)
@@ -171,7 +171,7 @@ def rename_watchlist(
 @router.delete("/{watchlist_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_watchlist(
     watchlist_id: UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> None:
     service = WatchlistService(session)
@@ -191,7 +191,7 @@ def delete_watchlist(
 def add_ticker(
     watchlist_id: UUID,
     payload: WatchlistItemCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> WatchlistRead:
     service = WatchlistService(session)
@@ -217,7 +217,7 @@ def add_ticker(
 def remove_ticker(
     watchlist_id: UUID,
     ticker: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     session: Session = Depends(get_session),
 ) -> None:
     service = WatchlistService(session)
