@@ -8,6 +8,15 @@ export interface User {
   auth_provider: string;
   avatar_url: string | null;
   email_verified: boolean;
+  verification_sent_at: string | null;
+}
+
+export interface VerificationResponse {
+  message: string;
+}
+
+export interface ResendVerificationResponse {
+  message: string;
 }
 
 export interface AuthTokens {

@@ -10,6 +10,8 @@ export const API_ROUTES = {
     DELETE_ACCOUNT: "/auth/delete-account",
     GOOGLE_CALLBACK: "/auth/google/callback",
     GOOGLE_EXCHANGE: "/auth/google/exchange",
+    VERIFY_EMAIL: "/auth/verify-email",
+    RESEND_VERIFICATION: "/auth/resend-verification",
   },
   WATCHLISTS: {
     LIST: "/watchlists",

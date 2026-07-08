@@ -37,7 +37,7 @@ export function useRegisterMutation() {
   return useMutation({
     mutationFn: (data: RegisterRequest) => registerUser(data),
     onSuccess: () => {
-      router.push("/login");
+      router.push("/auth/verify-email-prompt");
     },
   });
 }

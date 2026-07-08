@@ -8,6 +8,8 @@ import type {
   ResetPasswordRequest,
   PasswordResetResponse,
   DeleteAccountRequest,
+  VerificationResponse,
+  ResendVerificationResponse,
 } from "@/features/auth/types";
 
 export async function loginUser(data: LoginRequest): Promise<User> {
@@ -55,6 +57,16 @@ export async function deleteAccount(data: DeleteAccountRequest): Promise<void> {
   await clientFetch<void>(API_ROUTES.AUTH.DELETE_ACCOUNT, {
     method: "DELETE",
     body: JSON.stringify(data),
+  });
+}
+
+export async function verifyEmail(token: string): Promise<VerificationResponse> {
+  return clientFetch<VerificationResponse>(`${API_ROUTES.AUTH.VERIFY_EMAIL}?token=${encodeURIComponent(token)}`);
+}
+
+export async function resendVerification(): Promise<ResendVerificationResponse> {
+  return clientFetch<ResendVerificationResponse>(API_ROUTES.AUTH.RESEND_VERIFICATION, {
+    method: "POST",
   });
 }
 
