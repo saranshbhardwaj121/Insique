@@ -53,8 +53,8 @@ Insique is a full-stack market intelligence platform that helps users analyze st
 
 | Platform | URL |
 |----------|-----|
-| **Frontend** | [https://insique.vercel.app](https://insique.vercel.app) |
-| **Backend API** | [https://insique-production.up.railway.app](https://insique-production.up.railway.app) |
+| **Live Demo** | [https://insique.vercel.app](https://insique.vercel.app) |
+
 
 ---
 
