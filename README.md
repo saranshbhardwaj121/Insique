@@ -9,14 +9,14 @@
 </p>
 
 <p align="center">
-  <a href="https://insique.vercel.app">🚀 Live Demo</a> •
-  <a href="https://github.com/yourusername/insique">💻 GitHub Repository</a> •
-  <a href="#product-demo">📹 Demo Video</a> •
-  <a href="#license">📄 License</a>
+  <a href="https://insique.vercel.app"> Live Demo</a> •
+  <a href="https://github.com/yourusername/insique"> GitHub Repository</a> •
+  <a href="#product-demo"> Demo Video</a> •
+  <a href="#license"> License</a>
 </p>
 
 <p align="center">
-  <em>Status: Beta v1.0 — This project is under active development. Feedback and suggestions are welcome.</em>
+  <em>Status: Beta v1.0 - This project is under active development. Feedback and suggestions are welcome.</em>
 </p>
 
 <p align="center">
