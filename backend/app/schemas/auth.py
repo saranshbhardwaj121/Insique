@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 
+from backend.app.schemas.user import UserRead
+
 
 class RegisterRequest(BaseModel):
     username: str = Field(min_length=3, max_length=50)
@@ -44,3 +46,7 @@ class PasswordResetResponse(BaseModel):
 
 class DeleteAccountRequest(BaseModel):
     password: str = Field(min_length=8, max_length=128)
+
+
+class RegisterResponse(UserRead):
+    email_sent: bool = False

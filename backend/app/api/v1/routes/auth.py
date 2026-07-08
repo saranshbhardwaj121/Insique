@@ -19,6 +19,7 @@ from backend.app.schemas.auth import (
     PasswordResetResponse,
     RefreshTokenRequest,
     RegisterRequest,
+    RegisterResponse,
     ResetPasswordRequest,
 )
 from backend.app.schemas.user import UserRead, VerificationResponse, ResendVerificationResponse
@@ -185,8 +186,8 @@ def google_exchange(
     return AuthTokensResponse(access_token=access_token, refresh_token=refresh_token)
 
 
-@router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterRequest, request: Request, session: Session = Depends(get_session)) -> UserRead:
+@router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
+def register(payload: RegisterRequest, request: Request, session: Session = Depends(get_session)) -> RegisterResponse:
     rate_limit_key = f"register:{request.client.host}" if request.client else payload.email
     if not register_rate_limiter.is_allowed(rate_limit_key):
         raise HTTPException(
@@ -201,9 +202,10 @@ def register(payload: RegisterRequest, request: Request, session: Session = Depe
             email=payload.email,
             password=payload.password,
         )
-        send_verification(user, session)
+        email_sent = send_verification(user, session)
         register_rate_limiter.reset(rate_limit_key)
-        return UserRead.model_validate(user)
+        user_read = UserRead.model_validate(user)
+        return RegisterResponse(**user_read.model_dump(), email_sent=email_sent)
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

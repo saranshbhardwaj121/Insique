@@ -56,3 +56,7 @@ export interface DeleteAccountRequest {
 export interface GoogleCallbackRequest {
   code: string;
 }
+
+export interface RegisterResponse extends User {
+  email_sent: boolean;
+}

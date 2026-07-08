@@ -13,6 +13,7 @@ import {
 import type {
   LoginRequest,
   RegisterRequest,
+  RegisterResponse,
   ForgotPasswordRequest,
   ResetPasswordRequest,
   DeleteAccountRequest,
@@ -36,8 +37,8 @@ export function useRegisterMutation() {
 
   return useMutation({
     mutationFn: (data: RegisterRequest) => registerUser(data),
-    onSuccess: () => {
-      router.push("/auth/verify-email-prompt");
+    onSuccess: (data: RegisterResponse) => {
+      router.push(`/auth/verify-email-prompt?email_sent=${data.email_sent}`);
     },
   });
 }

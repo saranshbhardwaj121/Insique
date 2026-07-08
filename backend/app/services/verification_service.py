@@ -38,7 +38,7 @@ def create_verification_token(user: User) -> str:
     return token
 
 
-def send_verification(user: User, session: Session) -> None:
+def send_verification(user: User, session: Session) -> bool:
     settings = get_settings()
     token = create_verification_token(user)
     session.commit()
@@ -49,6 +49,7 @@ def send_verification(user: User, session: Session) -> None:
         logger.info("Verification email sent to %s", user.email)
     else:
         logger.warning("Verification email not sent to %s (Resend API not configured)", user.email)
+    return sent
 
 
 def verify_email(token: str, session: Session) -> User:
@@ -76,7 +77,7 @@ def verify_email(token: str, session: Session) -> User:
     return user
 
 
-def resend_verification(user: User, session: Session) -> None:
+def resend_verification(user: User, session: Session) -> bool:
     if user.auth_provider == "GOOGLE":
         raise VerificationError("Google accounts are automatically verified")
 
@@ -88,5 +89,6 @@ def resend_verification(user: User, session: Session) -> None:
 
     user.verification_token_hash = None
     user.verification_token_expires_at = None
-    send_verification(user, session)
+    sent = send_verification(user, session)
     logger.info("Verification email resent to %s", user.email)
+    return sent

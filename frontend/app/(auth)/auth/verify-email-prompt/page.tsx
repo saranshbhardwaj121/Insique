@@ -2,13 +2,40 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Mail } from "lucide-react";
+import { Mail, AlertCircle } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Check your email - Insique",
 };
 
-export default function VerifyEmailPromptPage() {
+export default function VerifyEmailPromptPage({
+  searchParams,
+}: {
+  searchParams: { email_sent?: string };
+}) {
+  const emailSent = searchParams.email_sent !== "false";
+
+  if (!emailSent) {
+    return (
+      <Card className="w-full max-w-sm">
+        <CardHeader className="space-y-1 text-center">
+          <div className="flex justify-center mb-2">
+            <AlertCircle className="h-12 w-12 text-amber-500" />
+          </div>
+          <CardTitle className="text-2xl">Unable to send email</CardTitle>
+          <CardDescription>
+            We could not send a verification email at this time. Please try again later or contact support.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 text-center">
+          <Button variant="outline" className="w-full" asChild>
+            <Link href="/login">Back to login</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="space-y-1 text-center">

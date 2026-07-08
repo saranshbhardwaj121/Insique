@@ -10,6 +10,7 @@ import type {
   DeleteAccountRequest,
   VerificationResponse,
   ResendVerificationResponse,
+  RegisterResponse,
 } from "@/features/auth/types";
 
 export async function loginUser(data: LoginRequest): Promise<User> {
@@ -20,8 +21,8 @@ export async function loginUser(data: LoginRequest): Promise<User> {
   return result;
 }
 
-export async function registerUser(data: RegisterRequest): Promise<User> {
-  const result = await clientFetch<User>(API_ROUTES.AUTH.REGISTER, {
+export async function registerUser(data: RegisterRequest): Promise<RegisterResponse> {
+  const result = await clientFetch<RegisterResponse>(API_ROUTES.AUTH.REGISTER, {
     method: "POST",
     body: JSON.stringify(data),
   });
