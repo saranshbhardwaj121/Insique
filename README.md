@@ -1,227 +1,320 @@
-# Insique
+<p align="center">
+  <img src="docs/banner.png" alt="Insique Banner" width="100%">
+</p>
 
-Insique is a market intelligence platform designed to help investors and traders make evidence-based decisions using technical indicators, signal generation, market analytics, and automated monitoring.
+<h1 align="center">Insique</h1>
 
-Rather than relying on social media, speculation, or isolated indicators, Insique consolidates market data, technical analysis, confidence scoring, alerts, and stock discovery into a unified workflow.
+<p align="center">
+  <strong>Market Intelligence Platform</strong>
+</p>
+
+<p align="center">
+  <a href="https://insique.vercel.app">🚀 Live Demo</a> •
+  <a href="https://github.com/yourusername/insique">💻 GitHub Repository</a> •
+  <a href="#product-demo">📹 Demo Video</a> •
+  <a href="#license">📄 License</a>
+</p>
+
+<p align="center">
+  <em>Status: Beta v1.0 — This project is under active development. Feedback and suggestions are welcome.</em>
+</p>
+
+<p align="center">
+
+  [![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)](https://python.org)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+  [![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js&logoColor=white)](https://nextjs.org)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org)
+  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://postgresql.org)
+  [![Docker](https://img.shields.io/badge/Docker-✓-2496ED?logo=docker&logoColor=white)](https://docker.com)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+  [![GitHub stars](https://img.shields.io/github/stars/yourusername/insique?style=social)](https://github.com/yourusername/insique)
+  [![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/insique)](https://github.com/yourusername/insique)
+
+</p>
+
+> 📹 A complete walkthrough of Insique is available in the demo video.
 
 ---
 
-## Overview
+## Product Demo
 
-Financial markets generate large volumes of data, but extracting actionable information often requires switching between multiple tools, websites, and charting platforms.
-
-Insique aims to simplify this process by providing:
-
-* Market data exploration
-* Technical indicator analysis
-* Signal generation
-* Confidence scoring
-* Watchlist management
-* Smart stock discovery
-* Automated alert monitoring
-
-The platform is designed around a simple principle:
-
-> Trade with foresight, not luck.
+🎥 Demo Video (Coming Soon)
 
 ---
 
-## Core Capabilities
+## Description
+
+Insique is a full-stack market intelligence platform that helps users analyze stocks, manage watchlists, monitor portfolios, and generate technical trading signals through a secure and modern web application.
+
+---
+
+## Live Demo
+
+| Platform | URL |
+|----------|-----|
+| **Frontend** | [https://insique.vercel.app](https://insique.vercel.app) |
+| **Backend API** | [https://insique-production.up.railway.app](https://insique-production.up.railway.app) |
+
+---
+
+## Features
+
+- ✅ Secure JWT Authentication
+- ✅ Google OAuth Login
+- ✅ Refresh Tokens
+- ✅ Email Verification Backend
+- ✅ Password Reset
+- ✅ Portfolio Management
+- ✅ Watchlists
+- ✅ Live Market Data
+- ✅ Technical Signals
+- ✅ Responsive Dashboard
+- ✅ PostgreSQL Database
+- ✅ Docker Support
+- ✅ Railway Deployment
+- ✅ Vercel Deployment
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | Next.js 15, React, TypeScript, Tailwind CSS |
+| **Backend** | FastAPI, SQLAlchemy, PostgreSQL, Alembic, Pydantic |
+| **Authentication** | JWT, Google OAuth 2.0 |
+| **Email** | Resend |
+| **Infrastructure** | Docker, Railway, Vercel, GitHub |
+
+---
+
+## Architecture
+
+```mermaid
+graph TD
+    A["Frontend (Next.js)"] --> B["FastAPI Backend"]
+    B --> C["Authentication Layer"]
+    C --> D["PostgreSQL Database"]
+    B --> E["Market APIs"]
+```
+
+---
+
+## Screenshots
+
+### Login
+
+![Login](docs/login.png)
+
+### Google OAuth
+
+![Google Login](docs/google-login.png)
+
+### Dashboard
+
+![Dashboard](docs/dashboard.png)
 
 ### Watchlists
 
-Create and manage personalized stock watchlists.
-
-Features include:
-
-* Multiple watchlists
-* Quick navigation
-* Cross-platform ticker persistence
-* One-click access to analytics, signals, and market data
-
----
+![Watchlists](docs/watchlists.png)
 
 ### Market Data
 
-Access key company and trading information from a single interface.
+![Market Data](docs/market-data.png)
 
-Includes:
+### Portfolio
 
-* Current market price
-* Trading range
-* Volume statistics
-* Company information
-* Market capitalization metrics
+![Portfolio](docs/portfolio.png)
 
----
+### Technical Signals
 
-### Technical Analytics
-
-Analyze stocks using commonly used technical indicators.
-
-Supported indicators:
-
-* RSI (Relative Strength Index)
-* SMA (Simple Moving Average)
-* EMA (Exponential Moving Average)
-* MACD (Moving Average Convergence Divergence)
-
-Interactive visualizations help users understand indicator behavior rather than simply viewing raw values.
+![Signals](docs/signals.png)
 
 ---
 
-### Signal Engine
+## Running Locally
 
-Generate consolidated BUY, SELL, or NEUTRAL signals by evaluating multiple indicators simultaneously.
+### Prerequisites
 
-The objective is to provide a summarized market view while preserving transparency into the underlying calculations.
+- Python 3.12+
+- Node.js 18+
+- Docker (optional)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/insique.git
+cd insique
+```
+
+### 2. Create environment file
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your configuration values (database URL, secret key, OAuth credentials, etc.).
+
+### 3. Run with Docker
+
+```bash
+docker compose up
+```
+
+This starts both the PostgreSQL database and the application.
+
+### 4. Or run manually
+
+**Backend:**
+
+```bash
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\Activate.ps1
+
+# Install dependencies
+pip install -e .
+
+# Run database migrations
+cd backend
+alembic upgrade head
+
+# Start the server
+cd ..
+uvicorn backend.app.main:app --reload
+```
+
+The API will be available at `http://localhost:8000`.
+
+**Frontend:**
+
+```bash
+cd frontend
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+The app will be available at `http://localhost:3000`.
 
 ---
 
-### Confidence Scoring
-
-Every generated signal is accompanied by a confidence score.
-
-Confidence scores represent the degree of agreement among technical indicators and provide additional context beyond a simple directional recommendation.
-
----
-
-### Smart Search
-
-Search stocks using either ticker symbols or company names.
-
-Examples:
-
-* HDFC Bank
-* Reliance
-* Infosys
-* Tata Steel
-
-Autocomplete and discovery features reduce the need to memorize exchange-specific ticker symbols.
-
----
-
-### Connectivity Layer
-
-Ticker context is preserved across the platform.
-
-Once a stock is selected, users can move between:
-
-* Analytics
-* Signals
-* Market Data
-
-without repeatedly re-entering the same ticker.
-
----
-
-### Alert Engine
-
-Create automated monitoring rules based on:
-
-* Price thresholds
-* RSI values
-* Signal changes
-* Confidence scores
-
-Alerts are evaluated continuously in the background and trigger when user-defined conditions are met.
-
----
-
-## System Architecture
-
-### Frontend
-
-* Next.js
-* TypeScript
-* Tailwind CSS
-* TanStack Query
-* Recharts
+## Environment Variables
 
 ### Backend
 
-* FastAPI
-* SQLAlchemy
-* PostgreSQL
-* Alembic
-* APScheduler
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `SECRET_KEY` | JWT signing secret (min 16 chars) | Yes |
+| `JWT_ALGORITHM` | JWT signing algorithm (default: HS256) | No |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID | For Google Sign-In |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | For Google Sign-In |
+| `GOOGLE_REDIRECT_URI` | Google OAuth callback URL | For Google Sign-In |
+| `FRONTEND_URL` | Frontend URL for CORS and redirects | Yes |
+| `RESEND_API_KEY` | Resend API key for email delivery | For email features |
+| `FROM_EMAIL` | Sender email address | For email features |
 
-### Authentication
+### Frontend
 
-* JWT Authentication
-* Secure Password Hashing
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_FASTAPI_BASE_URL` | Backend API base URL | Yes |
 
 ---
 
 ## Project Structure
 
 ```text
-frontend/
-├── app/
-├── components/
-├── features/
-├── lib/
-
-backend/
-├── app/
-│   ├── api/
-│   ├── models/
-│   ├── repositories/
-│   ├── schemas/
-│   ├── services/
-│   └── core/
-├── alembic/
-
-docs/
+insique/
+├── backend/
+│   ├── app/
+│   │   ├── api/          # API routes and dependencies
+│   │   ├── core/         # Config, security, database session
+│   │   ├── models/       # SQLAlchemy models
+│   │   ├── repositories/ # Data access layer
+│   │   ├── schemas/      # Pydantic schemas
+│   │   └── services/     # Business logic
+│   ├── alembic/          # Database migrations
+│   └── tests/            # Backend tests
+├── frontend/
+│   ├── app/              # Next.js pages
+│   ├── components/       # UI components
+│   ├── features/         # Feature modules
+│   └── lib/              # Utilities and API client
+├── docs/                 # Documentation assets
+├── docker-compose.yml    # Docker Compose configuration
+├── Dockerfile            # Backend Dockerfile
+├── pyproject.toml        # Python project configuration
+└── README.md
 ```
 
 ---
 
-## Development Roadmap
+## Testing
 
-Completed
+### Backend
 
-* Authentication System
-* Watchlists
-* Market Data
-* Analytics
-* Signal Engine
-* Confidence Scoring
-* Interactive Charts
-* Landing Page
-* Smart Search
-* Alert Engine
+```bash
+cd backend
+pip install -e ".[dev]"
+pytest -v
+```
 
-In Progress
+### Frontend
 
-* Notification Center
-
-Planned
-
-* Portfolio Tracking
-* Paper Trading
-* Signal Backtesting
-* Strategy Builder
-* Pattern Recognition
-* Machine Learning Forecasting
+```bash
+cd frontend
+npm run lint
+npm run build
+```
 
 ---
 
-## Design Principles
+## Current Status
 
-Insique is built around four principles:
+- **Google Sign-In** is fully functional.
+- **Email verification** backend is complete.
+- **Email registration** is temporarily disabled in production because a custom sending domain has not yet been configured with Resend.
+- The functionality will be enabled once the production email domain is verified.
 
-1. Transparency over black-box recommendations
-2. Evidence over speculation
-3. Workflow efficiency over feature overload
-4. Progressive enhancement through modular architecture
+---
+
+## Future Roadmap
+
+- AI-powered stock insights
+- Portfolio analytics and performance tracking
+- Price alerts with push notifications
+- Advanced charting with interactive indicators
+- Dark/Light themes
+- Mobile optimization
+- Performance improvements and caching
+
+---
+
+## Learning Outcomes
+
+This project involved learning and applying:
+
+- Production authentication flows (JWT, OAuth 2.0)
+- Google OAuth integration and ID token verification
+- Database migrations with Alembic
+- Docker containerization and deployment
+- RESTful API design with FastAPI
+- Full-stack deployment (Vercel, Railway)
+- Secure backend development practices
+- Email service integration with Resend
+- Frontend state management with TanStack Query
+
+---
+
+## License
+
+MIT
 
 ---
 
 ## Disclaimer
 
-Insique is an educational and analytical platform.
-
-The platform does not provide financial advice, investment recommendations, or guarantees of future performance.
-
-Users should conduct independent research and evaluate risk before making investment decisions.
+Insique is an educational and analytical platform. It does not provide financial advice, investment recommendations, or guarantees of future performance. Users should conduct independent research and evaluate risk before making investment decisions.
