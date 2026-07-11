@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Moon, Sun, LogOut, Search } from "lucide-react";
+import { Moon, Sun, LogOut, Search, User } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/notification-bell";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -67,7 +67,7 @@ export function TopBar() {
 
   const initials = user?.username
     ? user.username.slice(0, 2).toUpperCase()
-    : "SF";
+    : null;
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:px-6">
@@ -123,7 +123,9 @@ export function TopBar() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full">
             <Avatar className="h-8 w-8">
-              <AvatarFallback>{initials}</AvatarFallback>
+              <AvatarFallback>
+                {initials ?? <User className="h-4 w-4" />}
+              </AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
